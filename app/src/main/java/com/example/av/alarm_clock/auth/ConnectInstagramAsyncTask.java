@@ -1,8 +1,12 @@
 package com.example.av.alarm_clock.auth;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.example.av.alarm_clock.R;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -25,10 +29,12 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
     public static final String SELF_INFO = "https://api.instagram.com/v1/users/self";
     private final String accessToken;
     private final String apiUrl;
+    private final Context context;
 
-    public ConnectInstagramAsyncTask(String accessToken, String apiUrl) {
+    public ConnectInstagramAsyncTask(String accessToken, String apiUrl, Context context) {
         this.accessToken = accessToken;
         this.apiUrl = apiUrl;
+        this.context = context;
     }
 
     @Override
@@ -92,5 +98,27 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
         }
         return responseBuilder.toString();
     }
+
+    @Override
+    protected void onPostExecute(JSONObject result) {
+        try {
+            if (result.has("data")) {
+                JSONObject data = result.getJSONObject("data");
+                String fullName = data.getString("full_name");
+                Integer id = data.getInt("id");
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences(
+                        context.getString(R.string.app_pref_file),
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor prefereceEditor = sharedPreferences.edit();
+                prefereceEditor.putString("full_name", fullName);
+                prefereceEditor.putInt("id", id);
+                prefereceEditor.commit();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

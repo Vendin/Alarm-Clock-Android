@@ -6,8 +6,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,6 +61,7 @@ public class LoginActivity extends Activity {
 
         // Set up the login form.
         webView = (WebView) findViewById(R.id.webView);
+        setClient(webView);
         webView.loadUrl(AUTH_URL);
     }
 
@@ -66,7 +69,7 @@ public class LoginActivity extends Activity {
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // Show the Up button in the action bar.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            // getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -77,13 +80,24 @@ public class LoginActivity extends Activity {
                 Log.d(this.getClass().getCanonicalName(), "URL: " + url);
                 if (url.startsWith(REDIRECT_URI)) {
                     if (url.contains("access_token")) {
-                        String access_token = url.split("#access_token=")[1];
-                        Log.d(this.getClass().getCanonicalName(), "TOKEN: " + access_token);
-                        AsyncTask<String,Void,JSONObject> connectTask = new ConnectInstagramAsyncTask(access_token,
-                                ConnectInstagramAsyncTask.SELF_INFO);
+                        String accessToken = url.split("#access_token=")[1];
+                        Context context = LoginActivity.this;
+
+                        Log.d(this.getClass().getCanonicalName(), "TOKEN: " + accessToken);
+                        AsyncTask<String,Void,JSONObject> connectTask =
+                                new ConnectInstagramAsyncTask(accessToken,
+                                ConnectInstagramAsyncTask.SELF_INFO, context);
                         connectTask.execute((String) null);
+
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                                context.getString(R.string.app_pref_file),
+                                Context.MODE_PRIVATE);
+                        SharedPreferences.Editor prefereceEditor = sharedPreferences.edit();
+                        prefereceEditor.putString("access_token", accessToken);
+                        prefereceEditor.commit();
                     } else if (url.contains("error_reason")) {
-                        Toast.makeText(LoginActivity.this, String.format(getString(R.string.account_denied), "Instagram"),
+                        Toast.makeText(LoginActivity.this,
+                                String.format(getString(R.string.account_denied), "Instagram"),
                                 Toast.LENGTH_SHORT).show();
                         finish();
                     }
