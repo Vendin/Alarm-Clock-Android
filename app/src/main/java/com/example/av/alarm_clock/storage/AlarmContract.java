@@ -10,7 +10,7 @@ import com.example.av.alarm_clock.Alarm;
 public final class AlarmContract {
     private AlarmContract() {}
 
-    private static final String SMALL_TYPE = " SMALLINT";
+    private static final String SMALL_TYPE = " INTEGER";
     private static final String BOOL_TYPE = " BOOLEAN";
     private static final String COMMA_SEP = ",";
 
