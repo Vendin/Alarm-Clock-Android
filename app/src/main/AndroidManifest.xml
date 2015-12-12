@@ -33,7 +33,10 @@
             android:name=".alarm_main.AlarmList"
             android:label="@string/title_activity_alarm_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".alarm_main.AlarmSetup"></activity>
+        <activity
+            android:name=".alarm_main.AlarmSetup"
+            android:label="Настройки будильника"
+            android:parentActivityName=".alarm_main.AlarmList" />
     </application>
 
 </manifest>
