@@ -83,7 +83,9 @@ public class LoginActivity extends Activity {
         webView.loadUrl(AUTH_URL);
 
         bus.register(this);
-        finishTask(null);
+        if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED) {
+            finishTask(null);
+        }
     }
 
     @Override
@@ -94,10 +96,9 @@ public class LoginActivity extends Activity {
 
     @Subscribe
     public void finishTask(JSONObject result) {
-        if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
+        Log.d(this.getClass().getCanonicalName(), "Task was finished");
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

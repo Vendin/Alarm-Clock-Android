@@ -76,6 +76,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
     private JSONObject dispatchResponse(int response, String message, HttpURLConnection connection) {
         if (response == HttpStatus.SC_OK) {
             String messageBody = getMessageBody(connection);
+            Log.d(this.getClass().getCanonicalName(), messageBody);
             try {
                 JSONObject result = new JSONObject(messageBody);
                 return result;
@@ -117,6 +118,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
                 prefereceEditor.putString("full_name", fullName);
                 prefereceEditor.putInt("id", id);
                 prefereceEditor.commit();
+                Log.d(this.getClass().getCanonicalName(), "Preferences are saved");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -125,7 +127,8 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
 
     @Override
     protected void onPostExecute(JSONObject result) {
-        bus.post(result);
+        if(bus != null)
+            bus.post(result);
     }
 
 }

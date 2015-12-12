@@ -38,7 +38,7 @@ public class AlarmTableHelper {
     public Cursor getAlarmsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        final String sortOrder = AlarmEntry.COLUMN_NAME_ALARM_HOUR + " ASC" +
+        final String sortOrder = AlarmEntry.COLUMN_NAME_ALARM_HOUR + " ASC," +
                 AlarmEntry.COLUMN_NAME_ALARM_MINUTE + " ASC";
         return db.query(
                 AlarmEntry.TABLE_NAME,

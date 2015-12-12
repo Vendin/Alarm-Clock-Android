@@ -36,10 +36,10 @@ public final class AlarmContract {
             AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED
     };
 
-    static final int PROJECTION_ID_INDEX = 0;
-    static final int PROJECTION_HOUR_INDEX = 1;
-    static final int PROJECTION_MINUTE_INDEX = 2;
-    static final int PROJECTION_IS_ENABLED_INDEX = 3;
+    public static final int PROJECTION_ID_INDEX = 0;
+    public static final int PROJECTION_HOUR_INDEX = 1;
+    public static final int PROJECTION_MINUTE_INDEX = 2;
+    public static final int PROJECTION_IS_ENABLED_INDEX = 3;
 
     public static abstract class AlarmEntry implements BaseColumns {
         public static final String TABLE_NAME = "alarm";

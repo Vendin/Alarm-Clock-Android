@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.av.alarm_clock.alarm_main.AlarmList;
 import com.example.av.alarm_clock.auth.ConnectInstagramAsyncTask;
 import com.example.av.alarm_clock.auth.LoginActivity;
 import com.squareup.otto.Bus;
@@ -33,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(
                 getString(R.string.app_pref_file), Context.MODE_PRIVATE);
 
-        final String authToken = sharedPreferences.getString("auth_token", "no auth token");
+        final String authToken = sharedPreferences.getString("access_token", "no auth token");
         Toast toast = Toast.makeText(this, authToken, Toast.LENGTH_SHORT);
         toast.show();
 
-        if (sharedPreferences.getString("auth_token", null) == null) {
+        if (sharedPreferences.getString("access_token", null) == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         } else if (sharedPreferences.getString("full_name", null) == null) {
@@ -46,18 +47,20 @@ public class MainActivity extends AppCompatActivity {
                         ConnectInstagramAsyncTask.SELF_INFO, this, bus);
                 loginTask.execute((String[]) null);
             }
+        } else {
+            Intent intent = new Intent(this, AlarmList.class);
+            startActivity(intent);
         }
 
         bus.register(this);
-        finishTask(null);
+        if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED)
+            finishTask(null);
     }
 
     @Subscribe
     public void finishTask(JSONObject result) {
-        if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED) {
-            Toast toast = Toast.makeText(this, "Task has finished!", Toast.LENGTH_SHORT);
-            toast.show();
-        }
+        Toast toast = Toast.makeText(this, "Task has finished!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
