@@ -78,6 +78,7 @@ public class AlarmTableHelper {
                 selection, selectionArgs,
                 null, null, null,
                 "1");
+        cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             Alarm alarm = new Alarm(cursor);
             return alarm;

@@ -27,15 +27,22 @@ public class AlarmSetup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_setup);
 
-        Intent callerIntent = getIntent();
-        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
-            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
-        }
         timePicker = (TimePicker) findViewById(R.id.timePicker);
 
         GregorianCalendar now = new GregorianCalendar();
         timePicker.setCurrentHour(now.get(Calendar.HOUR));
         timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
+
+        Intent callerIntent = getIntent();
+        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
+            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
+            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
+            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
+            if (alarm != null) {
+                timePicker.setCurrentHour((int) alarm.getHour());
+                timePicker.setCurrentMinute((int) alarm.getMinute());
+            }
+        }
     }
 
     @Override
