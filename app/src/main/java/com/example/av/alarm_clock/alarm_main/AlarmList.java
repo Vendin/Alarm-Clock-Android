@@ -1,5 +1,6 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -29,8 +30,8 @@ public class AlarmList extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(AlarmList.this, AlarmSetup.class);
+                startActivity(intent);
             }
         });
     }
