@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.av.alarm_clock.R;
+import com.squareup.otto.Bus;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -30,11 +31,13 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
     private final String accessToken;
     private final String apiUrl;
     private final Context context;
+    private final Bus bus;
 
-    public ConnectInstagramAsyncTask(String accessToken, String apiUrl, Context context) {
+    public ConnectInstagramAsyncTask(String accessToken, String apiUrl, Context context, Bus bus) {
         this.accessToken = accessToken;
         this.apiUrl = apiUrl;
         this.context = context;
+        this.bus = bus;
     }
 
     @Override
@@ -65,6 +68,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
             // Network error
             e.printStackTrace();
         }
+        saveUserData(result);
         return result;
     }
 
@@ -84,7 +88,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
         }
     }
 
-    private String getMessageBody(HttpURLConnection connection) {
+    public String getMessageBody(HttpURLConnection connection) {
         StringBuilder responseBuilder = new StringBuilder();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -99,8 +103,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
         return responseBuilder.toString();
     }
 
-    @Override
-    protected void onPostExecute(JSONObject result) {
+    protected void saveUserData(JSONObject result) {
         try {
             if (result.has("data")) {
                 JSONObject data = result.getJSONObject("data");
@@ -120,5 +123,9 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
         }
     }
 
+    @Override
+    protected void onPostExecute(JSONObject result) {
+        bus.post(result);
+    }
 
 }

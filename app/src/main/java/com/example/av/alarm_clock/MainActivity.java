@@ -3,6 +3,7 @@ package com.example.av.alarm_clock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,8 +12,14 @@ import android.widget.Toast;
 
 import com.example.av.alarm_clock.auth.ConnectInstagramAsyncTask;
 import com.example.av.alarm_clock.auth.LoginActivity;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
+    private static final Bus bus = new Bus();
+    private static AsyncTask loginTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +40,29 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getString("auth_token", null) == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        } else if (sharedPreferences.getString("full_name", null) == null) {
+            if (loginTask == null) {
+                loginTask = new ConnectInstagramAsyncTask(authToken,
+                        ConnectInstagramAsyncTask.SELF_INFO, this, bus);
+                loginTask.execute((String[]) null);
+            }
         }
 
-        if (sharedPreferences.getString("full_name", null) == null) {
-            ConnectInstagramAsyncTask asyncTask = new ConnectInstagramAsyncTask(authToken,
-                    ConnectInstagramAsyncTask.SELF_INFO, this);
-            asyncTask.execute((String) null);
+        bus.register(this);
+        finishTask(null);
+    }
+
+    @Subscribe
+    public void finishTask(JSONObject result) {
+        if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED) {
+            Toast toast = Toast.makeText(this, "Task has finished!", Toast.LENGTH_SHORT);
+            toast.show();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bus.unregister(this);
     }
 }
