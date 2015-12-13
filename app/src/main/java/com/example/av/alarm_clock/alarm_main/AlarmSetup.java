@@ -41,6 +41,8 @@ public class AlarmSetup extends AppCompatActivity {
             if (alarm != null) {
                 timePicker.setCurrentHour((int) alarm.getHour());
                 timePicker.setCurrentMinute((int) alarm.getMinute());
+            } else {
+                alarmID = null;
             }
         }
     }
@@ -48,6 +50,10 @@ public class AlarmSetup extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
+        if (alarmID == null) {
+            MenuItem item = menu.findItem(R.id.deleteAction);
+            item.setVisible(false);
+        }
         return true;
     }
 
@@ -56,7 +62,10 @@ public class AlarmSetup extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.saveAction:
                 saveAlarm();
-            case R.id.cancelAction:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.deleteAction:
+                deleteAlarm();
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:
@@ -83,5 +92,10 @@ public class AlarmSetup extends AppCompatActivity {
             alarmToSave.setMinute((short) minute);
             alarmTableHelper.updateAlarm(alarmToSave);
         }
+    }
+
+    protected void deleteAlarm() {
+        AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
+        alarmTableHelper.deleteAlarm(alarmID);
     }
 }
