@@ -17,10 +17,12 @@ public class AlarmClockDbHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(AlarmContract.SQL_CREATE_ENTRIES);
+        db.execSQL(ImageContract.CREATE_TABLE);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(AlarmContract.SQL_DELETE_ENTRIES);
+        db.execSQL(ImageContract.DELETE_TABLE);
         onCreate(db);
     }
 

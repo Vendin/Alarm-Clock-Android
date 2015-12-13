@@ -3,9 +3,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.example.av.alarm_clock.Alarm;
+import com.example.av.alarm_clock.models.Alarm;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

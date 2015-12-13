@@ -2,8 +2,6 @@ package com.example.av.alarm_clock.storage;
 
 import android.provider.BaseColumns;
 
-import com.example.av.alarm_clock.Alarm;
-
 /**
  * Created by mikrut on 29.11.15.
  */
