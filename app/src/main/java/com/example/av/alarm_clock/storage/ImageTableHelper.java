@@ -10,6 +10,8 @@ import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageContract;
 import com.example.av.alarm_clock.storage.ImageContract.ImageEntry;
 
+import java.util.ArrayList;
+
 /**
  * Created by Михаил on 13.12.2015.
  */
@@ -21,13 +23,15 @@ public class ImageTableHelper {
             ImageEntry._ID,
             ImageEntry.COLUMN_NAME_FILENAME,
             ImageEntry.COLUMN_NAME_FRIENDLY,
-            ImageEntry.COLUMN_NAME_MEDIA_ID
+            ImageEntry.COLUMN_NAME_MEDIA_ID,
+            ImageEntry.COLUMN_NAME_SHOWN
     };
 
     public static final int PROJECTION_ID_INDEX = 0;
     public static final int PROJECTION_FILENAME_INDEX = 1;
     public static final int PROJECTION_FRIENDLY_INDEX = 2;
     public static final int PROJECTION_MEDIA_ID_INDEX = 3;
+    public static final int PROJECTION_SHOWN_INDEX    = 4;
 
 
     public ImageTableHelper(Context context) {
@@ -63,7 +67,7 @@ public class ImageTableHelper {
         db.delete(ImageEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
-    public Cursor getImagesCursor(boolean friendly, int limitation, int offset) {
+    public Cursor getImagesCursor(boolean friendly, int limitation, int offset, boolean shown) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String whereClause = ImageEntry.COLUMN_NAME_FRIENDLY + (friendly ? " > 0" : " = 0");
@@ -77,5 +81,19 @@ public class ImageTableHelper {
                 null,
                 String.valueOf(offset) + "," + String.valueOf(limitation)
         );
+    }
+
+    public ArrayList<ImageFile> getImageFiles(boolean friendly, int limitation, int offset) {
+        return getImageFiles(friendly, limitation, offset, false);
+    }
+
+    public ArrayList<ImageFile> getImageFiles(boolean friendly, int limitation, int offset, boolean shown) {
+        Cursor cursor = getImagesCursor(friendly, limitation, offset, shown);
+        ArrayList<ImageFile> imageFiles = new ArrayList<>(cursor.getCount());
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            ImageFile imageFile = new ImageFile(cursor);
+            imageFiles.add(imageFile);
+        }
+        return imageFiles;
     }
 }

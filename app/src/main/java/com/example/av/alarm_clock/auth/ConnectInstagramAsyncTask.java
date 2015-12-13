@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.api.Requester;
 import com.squareup.otto.Bus;
 
 import org.apache.http.HttpStatus;
@@ -14,12 +15,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -75,7 +73,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
     @NonNull
     private JSONObject dispatchResponse(int response, String message, HttpURLConnection connection) {
         if (response == HttpStatus.SC_OK) {
-            String messageBody = getMessageBody(connection);
+            String messageBody = Requester.getMessageBody(connection);
             Log.d(this.getClass().getCanonicalName(), messageBody);
             try {
                 JSONObject result = new JSONObject(messageBody);
@@ -87,21 +85,6 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
         } else {
             return new JSONObject();
         }
-    }
-
-    public String getMessageBody(HttpURLConnection connection) {
-        StringBuilder responseBuilder = new StringBuilder();
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = rd.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            rd.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return responseBuilder.toString();
     }
 
     protected void saveUserData(JSONObject result) {

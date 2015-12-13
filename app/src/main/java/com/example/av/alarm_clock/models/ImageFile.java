@@ -7,6 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 
+import com.example.av.alarm_clock.storage.ImageContract;
+import com.example.av.alarm_clock.storage.ImageTableHelper;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,17 +24,29 @@ public class ImageFile {
     private String filename;
     private Integer mediaId;
     private Integer id;
-    private boolean friendly;
+    private boolean friendly = false;
+    private boolean shown = false;
 
     public static final String folderName = "images";
 
-    public ImageFile(@NotNull Cursor cursor) {
+    public ImageFile() {}
 
+    public ImageFile(@NotNull Cursor cursor) {
+        setFilename(cursor.getString(ImageTableHelper.PROJECTION_FILENAME_INDEX));
+        setMediaId(cursor.getInt(ImageTableHelper.PROJECTION_MEDIA_ID_INDEX));
+        setId(cursor.getInt(ImageTableHelper.PROJECTION_ID_INDEX));
+        setFriendly(cursor.getInt(ImageTableHelper.PROJECTION_FRIENDLY_INDEX) > 0);
+        setShown(cursor.getInt(ImageTableHelper.PROJECTION_SHOWN_INDEX) > 0);
     }
 
     @NotNull
     public ContentValues getContentValues() {
-        return null;
+        ContentValues cv = new ContentValues();
+        cv.put(ImageContract.ImageEntry.COLUMN_NAME_FILENAME, getFilename());
+        cv.put(ImageContract.ImageEntry.COLUMN_NAME_FRIENDLY, isFriendly());
+        cv.put(ImageContract.ImageEntry.COLUMN_NAME_MEDIA_ID, getMediaId());
+        cv.put(ImageContract.ImageEntry.COLUMN_NAME_SHOWN, isShown());
+        return cv;
     }
 
     @Nullable
@@ -81,5 +96,13 @@ public class ImageFile {
 
     public void setFriendly(boolean friendly) {
         this.friendly = friendly;
+    }
+
+    public boolean isShown() {
+        return shown;
+    }
+
+    public void setShown(boolean shown) {
+        this.shown = shown;
     }
 }

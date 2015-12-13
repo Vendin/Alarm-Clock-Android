@@ -13,6 +13,7 @@ public class ImageContract {
             ImageEntry._ID + " INTEGER PRIMARY KEY," +
             ImageEntry.COLUMN_NAME_FILENAME + " TEXT," +
             ImageEntry.COLUMN_NAME_FRIENDLY + " BOOLEAN," +
+            ImageEntry.COLUMN_NAME_SHOWN + " BOOLEAN," +
             ImageEntry.COLUMN_NAME_MEDIA_ID + " INTEGER," + ")";
     public static final String DELETE_TABLE = "DROP TABLE IF EXISTS" + ImageEntry.TABLE_NAME;
 
@@ -22,5 +23,6 @@ public class ImageContract {
         public static final String COLUMN_NAME_FILENAME = "filename";
         public static final String COLUMN_NAME_FRIENDLY = "friendly";
         public static final String COLUMN_NAME_MEDIA_ID = "media_id";
+        public static final String COLUMN_NAME_SHOWN    = "shown";
     }
 }
