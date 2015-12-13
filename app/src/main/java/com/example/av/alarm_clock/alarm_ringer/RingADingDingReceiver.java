@@ -26,6 +26,8 @@ public class RingADingDingReceiver extends BroadcastReceiver {
 
     protected void ring(Context context, Intent intent) {
         Intent startRingingIntent = new Intent(context, RiseAndShineMrFreemanActivity.class);
+        startRingingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+            Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(startRingingIntent);
     }
 }

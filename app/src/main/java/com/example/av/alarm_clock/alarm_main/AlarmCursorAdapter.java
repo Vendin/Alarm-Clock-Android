@@ -62,7 +62,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
 
             AlarmTableHelper alarmTableHelper = new AlarmTableHelper(context);
             Alarm alarm = alarmTableHelper.getAlarm(alarmId);
-            if (alarm != null) {
+            if (alarm != null && alarm.isEnabled() != isChecked) {
                 alarm.setEnabled(isChecked);
                 alarmTableHelper.updateAlarm(alarm);
             }

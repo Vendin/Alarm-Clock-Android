@@ -30,7 +30,7 @@ public class AlarmSetup extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker);
 
         GregorianCalendar now = new GregorianCalendar();
-        timePicker.setCurrentHour(now.get(Calendar.HOUR));
+        timePicker.setCurrentHour(now.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
 
         Intent callerIntent = getIntent();
