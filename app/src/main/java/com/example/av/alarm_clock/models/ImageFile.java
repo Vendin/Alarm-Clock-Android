@@ -5,13 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 
 import com.example.av.alarm_clock.storage.ImageContract;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,18 +23,20 @@ import java.io.FileNotFoundException;
  */
 public class ImageFile {
     private String filename;
-    private Integer mediaId;
+    private String mediaId;
     private Integer id;
     private boolean friendly = false;
     private boolean shown = false;
 
-    public static final String folderName = "images";
+    private String photoURL;
+
+    public static final String FOLDER_NAME = "images";
 
     public ImageFile() {}
 
     public ImageFile(@NotNull Cursor cursor) {
         setFilename(cursor.getString(ImageTableHelper.PROJECTION_FILENAME_INDEX));
-        setMediaId(cursor.getInt(ImageTableHelper.PROJECTION_MEDIA_ID_INDEX));
+        setMediaId(cursor.getString(ImageTableHelper.PROJECTION_MEDIA_ID_INDEX));
         setId(cursor.getInt(ImageTableHelper.PROJECTION_ID_INDEX));
         setFriendly(cursor.getInt(ImageTableHelper.PROJECTION_FRIENDLY_INDEX) > 0);
         setShown(cursor.getInt(ImageTableHelper.PROJECTION_SHOWN_INDEX) > 0);
@@ -49,10 +52,31 @@ public class ImageFile {
         return cv;
     }
 
+    public static File getImagesFolder(Context context) {
+        return new File(context.getFilesDir(), FOLDER_NAME);
+    }
+
+    @Nullable
+    public static ImageFile fromJSONObject(JSONObject imageObject) throws JSONException {
+        String type = imageObject.getString("type");
+
+        ImageFile imageFile = null;
+        if (type.equals("image")) {
+            String imageMediaID = imageObject.getString("id");
+            String imageLink    = imageObject.getJSONObject("images").getJSONObject("standard_resolution").getString("url");
+
+            imageFile = new ImageFile();
+            imageFile.setMediaId(imageMediaID);
+            imageFile.setPhotoURL(imageLink);
+        }
+
+        return imageFile;
+    }
+
     @Nullable
     public Bitmap getBitmap(Context context) {
-        File imagesDir = new File(context.getFilesDir(), folderName);
-        File imgFile = new File(imagesDir, filename);
+
+        File imgFile = new File(getImagesFolder(context), filename);
 
         if (imgFile.exists()) {
             try {
@@ -74,11 +98,11 @@ public class ImageFile {
         this.filename = filename;
     }
 
-    public Integer getMediaId() {
+    public String getMediaId() {
         return mediaId;
     }
 
-    public void setMediaId(Integer mediaId) {
+    public void setMediaId(String mediaId) {
         this.mediaId = mediaId;
     }
 
@@ -104,5 +128,13 @@ public class ImageFile {
 
     public void setShown(boolean shown) {
         this.shown = shown;
+    }
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
     }
 }

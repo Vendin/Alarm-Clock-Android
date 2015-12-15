@@ -7,10 +7,15 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.api.Requester;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -59,19 +64,68 @@ public class ImageDownloadIntentService extends IntentService {
         List<ImageFile> unshownOthers = imageTableHelper.getImageFiles(false,
                 necessary_others_count, 0);
 
-        downloadFriendlies(necessary_friendlies_count - unshownFriendlies.size(), fetch_size);
-        downloadOthers(necessary_others_count - unshownOthers.size(), fetch_size);
+        Requester requester = new Requester(getBaseContext());
+
+        final int MAX_USED_FOLLOWEES = 5;
+        LinkedHashSet<String> followeeIDs = requester.getFolloweeIDs();
+        deleteUnusedFollowees(followeeIDs, MAX_USED_FOLLOWEES);
+
+        downloadFriendlies(necessary_friendlies_count - unshownFriendlies.size(),
+                followeeIDs, requester, imageTableHelper);
+        downloadOthers(necessary_others_count - unshownOthers.size(), fetch_size, requester,
+                imageTableHelper);
     }
 
-    private int downloadFriendlies(int downloadNum, int fetchSize) {
+    private int downloadFriendlies(int downloadNum,  LinkedHashSet<String> followeeIDs,
+                                   Requester requester, ImageTableHelper imageTableHelper) {
         Log.d(this.getClass().getCanonicalName(), "Downloading " + downloadNum + " friendlies");
-        return 0;
+        final int FOLLOWEE_FETCH_SIZE = 3;
+        int downloadedCtr = 0;
+
+        for(String fweeID : followeeIDs) {
+            List<ImageFile> photos = requester.getFolloweePhotos(fweeID, FOLLOWEE_FETCH_SIZE);
+            downloadedCtr += downloadList(photos, requester, imageTableHelper, downloadNum);
+        }
+
+        Log.d(this.getClass().getCanonicalName(), "Downloaded " + downloadedCtr + " friendlies");
+        return downloadedCtr;
     }
 
-    private int downloadOthers(int downloadNum, int fetchSize) {
+    private int downloadOthers(int downloadNum, int fetchSize, Requester requester, ImageTableHelper imageTableHelper) {
         Log.d(this.getClass().getCanonicalName(), "Downloading " + downloadNum + " others");
-        return 0;
+
+        List<ImageFile> photos = requester.getOtherPhotos(downloadNum, fetchSize);
+        int downloadedCtr = downloadList(photos, requester, imageTableHelper, downloadNum);;
+        Log.d(this.getClass().getCanonicalName(), "Downloaded " + downloadedCtr + " others");
+
+        return downloadedCtr;
     }
 
+    private int downloadList(List<ImageFile> photos, Requester requester,
+                             ImageTableHelper imageTableHelper, int downloadNum) {
+        int downloadedCtr = 0;
+        for (ImageFile photo : photos) {
+            if (requester.downloadPhoto(photo)) {
+                imageTableHelper.saveImageFile(photo);
+                downloadedCtr++;
+                if (downloadedCtr >= downloadNum) {
+                    return downloadedCtr;
+                }
+            }
+        }
+        return downloadedCtr;
+    }
 
+    private void deleteUnusedFollowees(LinkedHashSet<String> followeeIDs, int maxFollowees) {
+        Random rand = new Random();
+        while(followeeIDs.size() > maxFollowees) {
+            int index = rand.nextInt(followeeIDs.size());
+            Iterator<String> i = followeeIDs.iterator();
+            String id = i.next();
+            for(int ctr = 0; ctr < index; ctr++) {
+                id = i.next();
+            }
+            followeeIDs.remove(id);
+        }
+    }
 }

@@ -14,7 +14,7 @@ public class ImageContract {
             ImageEntry.COLUMN_NAME_FILENAME + " TEXT," +
             ImageEntry.COLUMN_NAME_FRIENDLY + " BOOLEAN," +
             ImageEntry.COLUMN_NAME_SHOWN + " BOOLEAN," +
-            ImageEntry.COLUMN_NAME_MEDIA_ID + " INTEGER," + ")";
+            ImageEntry.COLUMN_NAME_MEDIA_ID + " TEXT," + ")";
     public static final String DELETE_TABLE = "DROP TABLE IF EXISTS" + ImageEntry.TABLE_NAME;
 
     public static abstract class ImageEntry implements BaseColumns {

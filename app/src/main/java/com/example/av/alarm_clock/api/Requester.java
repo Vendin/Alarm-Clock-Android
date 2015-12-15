@@ -2,22 +2,34 @@ package com.example.av.alarm_clock.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
+import android.media.Image;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.models.ImageFile;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,9 +37,11 @@ import java.util.List;
  */
 public class Requester {
     private final String accessToken;
+    private Context context;
     private static final String API_URL = "https://api.instagram.com/v1/";
 
     public Requester(Context context) {
+        this.context = context;
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.app_pref_file),
                 Context.MODE_PRIVATE
@@ -50,18 +64,18 @@ public class Requester {
         return responseBuilder.toString();
     }
 
-    public HashSet<Integer> getFolloweeIDs() {
+    public LinkedHashSet<String> getFolloweeIDs() {
         final String followeeURL = "/users/self/follows";
         final String followeeMethod = "GET";
 
-        HashSet<Integer> ids = new HashSet<>();
+        LinkedHashSet<String> ids = new LinkedHashSet<>();
         try {
             JSONObject result = getJSONResponse(API_URL + followeeURL, followeeMethod);
             if (result != null) {
                 JSONArray data = result.getJSONArray("data");
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject followee = data.getJSONObject(i);
-                    int followeeID = followee.getInt("id");
+                    String followeeID = followee.getString("id");
                     ids.add(followeeID);
                 }
             }
@@ -69,14 +83,114 @@ public class Requester {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
 
         return ids;
     }
 
-    @Nullable
-    private JSONObject getJSONResponse(String location, String method) throws IOException, JSONException{
-        URL url = new URL(location);
+    public LinkedList<ImageFile> getFolloweePhotos(String fweeID, int photoNum) {
+        final String urlTemplate = "/users/%s/media/recent";
+        final String method = "GET";
+
+        LinkedList<ImageFile> imageFiles = new LinkedList<>();
+        try {
+            JSONObject result = getJSONResponse(API_URL + String.format(urlTemplate, fweeID),
+                    method);
+            if (result != null) {
+                JSONArray data = result.getJSONArray("data");
+                for (int i = 0; i < data.length() && imageFiles.size() < photoNum; i++) {
+                    JSONObject imageObject = data.getJSONObject(i);
+                    ImageFile imageFile = ImageFile.fromJSONObject(imageObject);
+                    if (imageFile != null) {
+                        imageFile.setFriendly(true);
+                        imageFiles.add(imageFile);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        return imageFiles;
+    }
+
+    public LinkedList<ImageFile> getOtherPhotos(int neededNum, int maxTryNum) {
+        final String othersUrl = "/media/search";
+        final String method = "GET";
+
+        final double moscowLat = 55.7522200;
+        final double moscowLng = 37.6155600;
+
+        LinkedList<ImageFile> imageFiles = new LinkedList<>();
+        try {
+            URIBuilder uriBuilder = new URIBuilder(othersUrl);
+            uriBuilder.addParameter("lat", String.valueOf(moscowLat));
+            uriBuilder.addParameter("lng", String.valueOf(moscowLng));
+
+            JSONObject response = getJSONResponse(uriBuilder.build().toURL(), method);
+            if (response != null) {
+                JSONArray data = response.getJSONArray("data");
+                for (int i = 0; i < maxTryNum && i < data.length() && imageFiles.size() < neededNum; i++) {
+                    JSONObject imageObject = data.getJSONObject(i);
+                    ImageFile imageFile = ImageFile.fromJSONObject(imageObject);
+                    if (imageFile != null) {
+                        imageFile.setFriendly(false);
+                        imageFiles.add(imageFile);
+                    }
+                }
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return imageFiles;
+    }
+
+    public boolean downloadPhoto(ImageFile photo) {
+        boolean downloaded = false;
+        try {
+            final String uri = photo.getPhotoURL();
+            final String extension = uri.substring(uri.lastIndexOf(".") + 1);;
+
+            URL url = new URL(uri);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+
+            InputStream input = new BufferedInputStream(connection.getInputStream());
+            File outputFile = new File(ImageFile.getImagesFolder(context),
+                    photo.getId() + "." + extension);
+            OutputStream output = new FileOutputStream(outputFile);
+
+            byte data[] = new byte[1024];
+            long total = 0;
+            int count;
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                output.write(data, 0, count);
+            }
+
+            output.flush();
+            output.close();
+            downloaded = true;
+            photo.setFilename(outputFile.getName());
+
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return downloaded;
+    }
+
+    private JSONObject getJSONResponse(URL url, String method) throws IOException, JSONException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
         connection.connect();
@@ -88,5 +202,11 @@ public class Requester {
             return result;
         }
         return null;
+    }
+
+    private JSONObject getJSONResponse(String location, String method) throws IOException, JSONException, URISyntaxException {
+        URIBuilder uriBuilder = new URIBuilder(location);
+        uriBuilder.addParameter("access_token", accessToken);
+        return getJSONResponse(uriBuilder.build().toURL(), method);
     }
 }
