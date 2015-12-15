@@ -11,6 +11,7 @@ import com.example.av.alarm_clock.storage.ImageContract;
 import com.example.av.alarm_clock.storage.ImageContract.ImageEntry;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Михаил on 13.12.2015.
@@ -65,6 +66,14 @@ public class ImageTableHelper {
                 String.valueOf(id)
         };
         db.delete(ImageEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
+    public void removeOld(boolean friendly, int cnt) {
+        List<ImageFile> imagesToDelete = getImageFiles(friendly, cnt, 0, true);
+        for (ImageFile imageFile : imagesToDelete) {
+            imageFile.deleteFile(context);
+            deleteImageFile(imageFile.getId());
+        }
     }
 
     public Cursor getImagesCursor(boolean friendly, int limitation, int offset, boolean shown) {

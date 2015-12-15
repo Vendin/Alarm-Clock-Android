@@ -70,10 +70,13 @@ public class ImageDownloadIntentService extends IntentService {
         LinkedHashSet<String> followeeIDs = requester.getFolloweeIDs();
         deleteUnusedFollowees(followeeIDs, MAX_USED_FOLLOWEES);
 
-        downloadFriendlies(necessary_friendlies_count - unshownFriendlies.size(),
+        int downloadedFrs = downloadFriendlies(necessary_friendlies_count - unshownFriendlies.size(),
                 followeeIDs, requester, imageTableHelper);
-        downloadOthers(necessary_others_count - unshownOthers.size(), fetch_size, requester,
-                imageTableHelper);
+        int downloadedOts = downloadOthers(necessary_others_count - unshownOthers.size(),
+                fetch_size, requester, imageTableHelper);
+
+        imageTableHelper.removeOld(true, downloadedFrs);
+        imageTableHelper.removeOld(false, downloadedOts);
     }
 
     private int downloadFriendlies(int downloadNum,  LinkedHashSet<String> followeeIDs,
@@ -95,6 +98,7 @@ public class ImageDownloadIntentService extends IntentService {
         Log.d(this.getClass().getCanonicalName(), "Downloading " + downloadNum + " others");
 
         List<ImageFile> photos = requester.getOtherPhotos(downloadNum, fetchSize);
+        Log.d(this.getClass().getCanonicalName(), "Found " + photos.size() + " others");
         int downloadedCtr = downloadList(photos, requester, imageTableHelper, downloadNum);;
         Log.d(this.getClass().getCanonicalName(), "Downloaded " + downloadedCtr + " others");
 

@@ -53,7 +53,10 @@ public class ImageFile {
     }
 
     public static File getImagesFolder(Context context) {
-        return new File(context.getFilesDir(), FOLDER_NAME);
+        File folder = new File(context.getFilesDir(), FOLDER_NAME);
+        if (!folder.exists())
+            folder.mkdir();
+        return folder;
     }
 
     @Nullable
@@ -71,6 +74,11 @@ public class ImageFile {
         }
 
         return imageFile;
+    }
+
+    public void deleteFile(Context context) {
+        File imgFile = new File(getImagesFolder(context), filename);
+        imgFile.delete();
     }
 
     @Nullable

@@ -3,6 +3,7 @@ package com.example.av.alarm_clock.api;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.util.Log;
 
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.models.ImageFile;
@@ -65,7 +66,7 @@ public class Requester {
     }
 
     public LinkedHashSet<String> getFolloweeIDs() {
-        final String followeeURL = "/users/self/follows";
+        final String followeeURL = "users/self/follows";
         final String followeeMethod = "GET";
 
         LinkedHashSet<String> ids = new LinkedHashSet<>();
@@ -91,7 +92,7 @@ public class Requester {
     }
 
     public LinkedList<ImageFile> getFolloweePhotos(String fweeID, int photoNum) {
-        final String urlTemplate = "/users/%s/media/recent";
+        final String urlTemplate = "users/%s/media/recent";
         final String method = "GET";
 
         LinkedList<ImageFile> imageFiles = new LinkedList<>();
@@ -99,6 +100,8 @@ public class Requester {
             JSONObject result = getJSONResponse(API_URL + String.format(urlTemplate, fweeID),
                     method);
             if (result != null) {
+                Log.d(this.getClass().getCanonicalName(), result.toString());
+
                 JSONArray data = result.getJSONArray("data");
                 for (int i = 0; i < data.length() && imageFiles.size() < photoNum; i++) {
                     JSONObject imageObject = data.getJSONObject(i);
@@ -109,19 +112,15 @@ public class Requester {
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | JSONException | URISyntaxException e) {
+            Log.e(Requester.class.getCanonicalName(), e.getLocalizedMessage());
         }
 
         return imageFiles;
     }
 
     public LinkedList<ImageFile> getOtherPhotos(int neededNum, int maxTryNum) {
-        final String othersUrl = "/media/search";
+        final String othersUrl = "media/search";
         final String method = "GET";
 
         final double moscowLat = 55.7522200;
@@ -129,12 +128,15 @@ public class Requester {
 
         LinkedList<ImageFile> imageFiles = new LinkedList<>();
         try {
-            URIBuilder uriBuilder = new URIBuilder(othersUrl);
+            URIBuilder uriBuilder = new URIBuilder(API_URL + othersUrl);
             uriBuilder.addParameter("lat", String.valueOf(moscowLat));
             uriBuilder.addParameter("lng", String.valueOf(moscowLng));
+            uriBuilder.addParameter("access_token", accessToken);
 
             JSONObject response = getJSONResponse(uriBuilder.build().toURL(), method);
             if (response != null) {
+                Log.d(this.getClass().getCanonicalName(), response.toString());
+
                 JSONArray data = response.getJSONArray("data");
                 for (int i = 0; i < maxTryNum && i < data.length() && imageFiles.size() < neededNum; i++) {
                     JSONObject imageObject = data.getJSONObject(i);
@@ -144,14 +146,13 @@ public class Requester {
                         imageFiles.add(imageFile);
                     }
                 }
+            } else {
+                Log.e(this.getClass().getCanonicalName(), "Received null response");
             }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (IOException | JSONException | URISyntaxException e) {
+            Log.e(Requester.class.getCanonicalName(), e.getLocalizedMessage());
         }
+
         return imageFiles;
     }
 
@@ -167,14 +168,15 @@ public class Requester {
 
             InputStream input = new BufferedInputStream(connection.getInputStream());
             File outputFile = new File(ImageFile.getImagesFolder(context),
-                    photo.getId() + "." + extension);
+                    photo.getMediaId() + "." + extension);
+            if (outputFile.exists())
+                outputFile.delete();
+            outputFile.createNewFile();
             OutputStream output = new FileOutputStream(outputFile);
 
             byte data[] = new byte[1024];
-            long total = 0;
             int count;
             while ((count = input.read(data)) != -1) {
-                total += count;
                 output.write(data, 0, count);
             }
 
@@ -200,6 +202,9 @@ public class Requester {
             String messageBody = getMessageBody(connection);
             JSONObject result = new JSONObject(messageBody);
             return result;
+        } else {
+            Log.e(Requester.class.getCanonicalName(), connection.getResponseMessage());
+            Log.e(Requester.class.getCanonicalName(), getMessageBody(connection));
         }
         return null;
     }
