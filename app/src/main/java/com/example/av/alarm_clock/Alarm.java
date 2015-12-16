@@ -1,5 +1,12 @@
 package com.example.av.alarm_clock;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import com.example.av.alarm_clock.storage.AlarmContract;
+
+import java.net.ConnectException;
+
 /**
  * Created by mikrut on 29.11.15.
  */
@@ -8,6 +15,15 @@ public class Alarm {
     private short hour;
     private short minute;
     private boolean enabled;
+
+    public Alarm(){}
+
+    public Alarm(Cursor cursor) {
+        setHour(cursor.getShort(AlarmContract.PROJECTION_HOUR_INDEX));
+        setMinute(cursor.getShort(AlarmContract.PROJECTION_MINUTE_INDEX));
+        setEnabled(cursor.getInt(AlarmContract.PROJECTION_IS_ENABLED_INDEX) > 0);
+        setId(cursor.getInt(AlarmContract.PROJECTION_ID_INDEX));
+    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -35,6 +51,14 @@ public class Alarm {
         } else {
             throw new IllegalArgumentException("Hour can be from 0 to 23");
         }
+    }
+
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_HOUR, getHour());
+        values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_MINUTE, getMinute());
+        values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED, isEnabled());
+        return values;
     }
 
     public short getMinute() {

@@ -9,7 +9,7 @@ import com.example.av.alarm_clock.storage.AlarmContract.AlarmEntry;
 import com.example.av.alarm_clock.Alarm;
 
 import org.jetbrains.annotations.NotNull;
-
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
@@ -23,14 +23,19 @@ public class AlarmTableHelper {
         dbHelper = new AlarmClockDbHelper(context);
     }
 
+    public void updateAlarm(@NotNull Alarm alarm) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = alarm.getContentValues();
+        String whereClause = AlarmEntry._ID + " = ?";
+        String[] whereArgs={alarm.getId().toString()};
+        db.update(AlarmEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
     public long saveAlarm(@NotNull Alarm alarm) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(AlarmEntry.COLUMN_NAME_ALARM_HOUR, alarm.getHour());
-        values.put(AlarmEntry.COLUMN_NAME_ALARM_MINUTE, alarm.getMinute());
-        values.put(AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED, alarm.isEnabled());
-
+        ContentValues values = alarm.getContentValues();
         return db.insert(AlarmEntry.TABLE_NAME, null, values);
     }
 
@@ -38,7 +43,7 @@ public class AlarmTableHelper {
     public Cursor getAlarmsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        final String sortOrder = AlarmEntry.COLUMN_NAME_ALARM_HOUR + " ASC" +
+        final String sortOrder = AlarmEntry.COLUMN_NAME_ALARM_HOUR + " ASC," +
                 AlarmEntry.COLUMN_NAME_ALARM_MINUTE + " ASC";
         return db.query(
                 AlarmEntry.TABLE_NAME,
@@ -57,15 +62,29 @@ public class AlarmTableHelper {
         Cursor cursor = getAlarmsCursor();
 
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            Alarm alarm = new Alarm();
-            alarm.setHour(cursor.getShort(AlarmContract.PROJECTION_HOUR_INDEX));
-            alarm.setMinute(cursor.getShort(AlarmContract.PROJECTION_MINUTE_INDEX));
-            alarm.setEnabled(cursor.getInt(AlarmContract.PROJECTION_IS_ENABLED_INDEX) > 0);
-            alarm.setId(cursor.getInt(AlarmContract.PROJECTION_ID_INDEX));
+            Alarm alarm = new Alarm(cursor);
             alarms.add(alarm);
         }
 
         return alarms;
+    }
+
+    @Nullable
+    public Alarm getAlarm(int id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection =  AlarmEntry._ID + " = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+        Cursor cursor = db.query(AlarmEntry.TABLE_NAME, AlarmContract.ALARM_PROJECTION,
+                selection, selectionArgs,
+                null, null, null,
+                "1");
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            Alarm alarm = new Alarm(cursor);
+            return alarm;
+        } else {
+            return null;
+        }
     }
 
     public void deleteAlarm(int id) {
