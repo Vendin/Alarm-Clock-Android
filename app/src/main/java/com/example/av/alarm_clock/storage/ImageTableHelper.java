@@ -79,7 +79,8 @@ public class ImageTableHelper {
     public Cursor getImagesCursor(boolean friendly, int limitation, int offset, boolean shown) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String whereClause = ImageEntry.COLUMN_NAME_FRIENDLY + (friendly ? " > 0" : " = 0");
+        String whereClause = ImageEntry.COLUMN_NAME_FRIENDLY + (friendly ? " > 0" : " = 0") +
+                " AND " + ImageEntry.COLUMN_NAME_SHOWN + (shown ? " > 0" : " = 0");
         return db.query(
                 ImageEntry.TABLE_NAME,
                 IMAGE_PROJECTION,
@@ -87,8 +88,8 @@ public class ImageTableHelper {
                 null,
                 null,
                 null,
-                null,
-                String.valueOf(offset) + "," + String.valueOf(limitation)
+                null//,
+                //String.valueOf(offset) + "," + String.valueOf(limitation)
         );
     }
 

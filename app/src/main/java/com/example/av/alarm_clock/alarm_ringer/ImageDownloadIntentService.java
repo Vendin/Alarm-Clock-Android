@@ -109,12 +109,12 @@ public class ImageDownloadIntentService extends IntentService {
                              ImageTableHelper imageTableHelper, int downloadNum) {
         int downloadedCtr = 0;
         for (ImageFile photo : photos) {
+            if (downloadedCtr >= downloadNum) {
+                return downloadedCtr;
+            }
             if (requester.downloadPhoto(photo)) {
                 imageTableHelper.saveImageFile(photo);
                 downloadedCtr++;
-                if (downloadedCtr >= downloadNum) {
-                    return downloadedCtr;
-                }
             }
         }
         return downloadedCtr;

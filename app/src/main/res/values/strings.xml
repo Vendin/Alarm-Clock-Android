@@ -10,7 +10,5 @@
     <string name="title_activity_alarm_list">Список будильников</string>
 
     <string name="title_activity_rise_and_shine_mr_freeman">С добрым утром!</string>
-    <string name="dummy_button">Кнопка</string>
-    <string name="dummy_content">С добрым утром</string>
 
 </resources>

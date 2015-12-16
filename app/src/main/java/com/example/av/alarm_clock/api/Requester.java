@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.models.ImageFile;
+import com.example.av.alarm_clock.storage.ImageTableHelper;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
