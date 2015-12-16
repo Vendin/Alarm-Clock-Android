@@ -37,6 +37,30 @@
             android:name=".alarm_main.AlarmSetup"
             android:label="Настройки будильника"
             android:parentActivityName=".alarm_main.AlarmList" />
+
+        <receiver
+            android:name=".alarm_ringer.RingADingDingReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver.RING_A_DING_DING" />
+                <action android:name="com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver.DAILY_DOWNLOAD" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".alarm_ringer.RiseAndShineMrFreemanActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_rise_and_shine_mr_freeman"
+            android:theme="@style/FullscreenTheme" />
+
+        <service
+            android:name=".alarm_ringer.ImageDownloadIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

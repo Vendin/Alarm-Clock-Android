@@ -5,13 +5,12 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.av.alarm_clock.Alarm;
+import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.storage.AlarmContract;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
@@ -62,7 +61,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
 
             AlarmTableHelper alarmTableHelper = new AlarmTableHelper(context);
             Alarm alarm = alarmTableHelper.getAlarm(alarmId);
-            if (alarm != null) {
+            if (alarm != null && alarm.isEnabled() != isChecked) {
                 alarm.setEnabled(isChecked);
                 alarmTableHelper.updateAlarm(alarm);
             }

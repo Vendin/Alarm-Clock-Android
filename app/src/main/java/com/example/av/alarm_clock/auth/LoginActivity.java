@@ -64,7 +64,8 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         CLIENT_ID = getString(R.string.oauth_client_id);
         AUTH_URL =  "https://instagram.com/oauth/authorize/?client_id="
-                + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=token";
+                + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=token" +
+                "&scope=public_content+follower_list";
 
         setContentView(R.layout.activity_login);
         setupActionBar();

@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.example.av.alarm_clock.alarm_ringer.AlarmRegistrator;
 import com.example.av.alarm_clock.storage.AlarmContract.AlarmEntry;
 
-import com.example.av.alarm_clock.Alarm;
+import com.example.av.alarm_clock.models.Alarm;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +20,10 @@ import java.util.ArrayList;
 public class AlarmTableHelper {
 
     private AlarmClockDbHelper dbHelper;
+    private Context context;
 
     public AlarmTableHelper(Context context) {
+        this.context = context;
         dbHelper = new AlarmClockDbHelper(context);
     }
 
@@ -30,13 +34,16 @@ public class AlarmTableHelper {
         String whereClause = AlarmEntry._ID + " = ?";
         String[] whereArgs={alarm.getId().toString()};
         db.update(AlarmEntry.TABLE_NAME, values, whereClause, whereArgs);
+        registerAlarms();
     }
 
     public long saveAlarm(@NotNull Alarm alarm) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = alarm.getContentValues();
-        return db.insert(AlarmEntry.TABLE_NAME, null, values);
+        long result = db.insert(AlarmEntry.TABLE_NAME, null, values);
+        registerAlarms();
+        return result;
     }
 
     @NotNull
@@ -92,5 +99,10 @@ public class AlarmTableHelper {
         String selection = AlarmEntry._ID + " = ?";
         String[] selectionArgs = { String.valueOf(id) };
         db.delete(AlarmEntry.TABLE_NAME, selection, selectionArgs);
+        registerAlarms();
+    }
+
+    protected void registerAlarms() {
+        AlarmRegistrator.registerAlarms(context, getAlarms());
     }
 }

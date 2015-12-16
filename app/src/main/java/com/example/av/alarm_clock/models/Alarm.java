@@ -1,4 +1,4 @@
-package com.example.av.alarm_clock;
+package com.example.av.alarm_clock.models;
 
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -1,6 +1,5 @@
 package com.example.av.alarm_clock.alarm_main;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TimePicker;
 
-import com.example.av.alarm_clock.Alarm;
+import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
 
@@ -30,7 +29,7 @@ public class AlarmSetup extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker);
 
         GregorianCalendar now = new GregorianCalendar();
-        timePicker.setCurrentHour(now.get(Calendar.HOUR));
+        timePicker.setCurrentHour(now.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
 
         Intent callerIntent = getIntent();
