@@ -88,8 +88,8 @@ public class ImageTableHelper {
                 null,
                 null,
                 null,
-                null//,
-                //String.valueOf(offset) + "," + String.valueOf(limitation)
+                null,//,
+                String.valueOf(limitation)//String.valueOf(offset) + "," + String.valueOf(limitation)
         );
     }
 

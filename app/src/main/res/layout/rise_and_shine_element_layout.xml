@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        <ImageView
             android:id="@+id/imageview"
             android:layout_width="match_parent"
             android:layout_height="350dp"
@@ -18,15 +18,25 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"/>
 
+        <ImageView
+            android:id="@+id/result_view"
+            android:src="@drawable/ic_mood_black_48dp"
+            android:visibility="gone"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:tint="#0000ff"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="125dp"/>
+
         <Button android:id="@+id/isFriendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="20dp"
             style="?android:attr/borderlessButtonStyle"
-            android:drawableLeft="@drawable/ic_done_black"
+            android:drawableLeft="@drawable/ic_done"
             android:drawablePadding="6dp"
             android:text="Фото друга"
-            android:textColor="#1B5E20"
+            android:textColor="@color/ok"
             android:layout_below="@+id/imageview"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -38,10 +48,10 @@
             android:layout_height="wrap_content"
             android:paddingRight="15dp"
             style="?android:attr/borderlessButtonStyle"
-            android:drawableLeft="@drawable/ic_block_black"
+            android:drawableLeft="@drawable/ic_block"
             android:drawablePadding="6dp"
             android:text="Не похоже"
-            android:textColor="#B71C1C"
+            android:textColor="@color/not_ok"
             android:layout_below="@+id/imageview"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
