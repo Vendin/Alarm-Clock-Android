@@ -1,24 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@android:drawable/gallery_thumb" />
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp">
 
-    <Button android:id="@+id/isFriendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/isNotFriendButton"
-        android:layout_alignBottom="@+id/imageview"
-        android:text="Друг"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button android:id="@+id/isNotFriendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/imageview"
-        android:text="Не похож"/>
-</RelativeLayout>
+        <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/imageview"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:src="@drawable/test_image"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <Button android:id="@+id/isFriendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:drawableLeft="@drawable/ic_done_black"
+            android:drawablePadding="6dp"
+            android:text="Фото друга"
+            android:textColor="#1B5E20"
+            android:layout_below="@+id/imageview"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"/>
+
+        <Button android:id="@+id/isNotFriendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="15dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:drawableLeft="@drawable/ic_block_black"
+            android:drawablePadding="6dp"
+            android:text="Не похоже"
+            android:textColor="#B71C1C"
+            android:layout_below="@+id/imageview"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

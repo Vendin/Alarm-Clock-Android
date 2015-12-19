@@ -6,6 +6,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +27,7 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
     public static final String IMAGES_ARRAY = "imagesArray";
 
     private LinearLayout mContentView;
-    private ListView imagesList;
+    private RecyclerView imagesList;
     private LinearLayout fullscreenContentControls;
 
     private static final int NEED_FRIEND = 3;
@@ -53,7 +55,7 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
-        imagesList = (ListView) findViewById(R.id.imagesList);
+        imagesList = (RecyclerView) findViewById(R.id.imagesList);
         fullscreenContentControls = (LinearLayout) findViewById(R.id.fullscreen_content_controls);
 
         puzzles = new ArrayList<>();
@@ -81,6 +83,8 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
 
         PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this, puzzles);
         imagesList.setAdapter(puzzleAdapter);
+        imagesList.setLayoutManager(new LinearLayoutManager(this));
+        imagesList.addItemDecoration(new PuzzleDecoration());
 
         total = puzzles.size();
         checkFinish();

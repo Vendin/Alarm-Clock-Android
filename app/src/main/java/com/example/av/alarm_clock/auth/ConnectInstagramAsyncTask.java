@@ -10,7 +10,6 @@ import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.api.Requester;
 import com.squareup.otto.Bus;
 
-import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +71,7 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
 
     @NonNull
     private JSONObject dispatchResponse(int response, String message, HttpURLConnection connection) {
-        if (response == HttpStatus.SC_OK) {
+        if (response == HttpURLConnection.HTTP_OK) {
             String messageBody = Requester.getMessageBody(connection);
             Log.d(this.getClass().getCanonicalName(), messageBody);
             try {
