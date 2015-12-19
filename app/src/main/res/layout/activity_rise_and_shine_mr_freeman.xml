@@ -40,15 +40,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            android:visibility="gone" >
+            android:orientation="vertical"
+            android:visibility="visible" >
 
             <Button
                 style="?metaButtonBarButtonStyle"
                 android:id="@+id/button"
-                android:layout_width="0dp"
+                android:drawableTop="@drawable/ic_alarm_off_white_48dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:textColor="#ffffff"
                 android:text="Отключить будильник" />
         </LinearLayout>
     </FrameLayout>
