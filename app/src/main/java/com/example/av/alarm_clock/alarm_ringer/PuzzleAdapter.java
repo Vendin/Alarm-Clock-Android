@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -100,7 +101,16 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
             // That's such a pity!
             // drawable.setTint(color);
             resultView.setImageDrawable(drawable);
-            resultView.setVisibility(visibility);
+            if (visibility == View.VISIBLE && resultView.getVisibility() == View.GONE) {
+                resultView.setAlpha(0f);
+                resultView.setVisibility(visibility);
+
+                resultView.animate()
+                        .alpha(1f)
+                        .setDuration(3000);
+            } else {
+                resultView.setVisibility(visibility);
+            }
             isFriendButton.setEnabled(buttonActiveness);
             isNotFriendButton.setEnabled(buttonActiveness);
         }
