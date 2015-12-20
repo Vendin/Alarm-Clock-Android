@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.loaders.ImageLoader;
@@ -41,15 +42,18 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
     public static final String GUESSES = "guesses";
     public static final String IMAGES_ARRAY = "imagesArray";
 
+    public static final int MAX_ATTEMPT = 3;
+
     private LinearLayout mContentView;
     private RecyclerView imagesList;
     private LinearLayout fullscreenContentControls;
     private Button button;
     private ProgressBar progressBar;
 
-    private int guesses = 0;
-    private int clicks  = 0;
-    private int total   = 0;
+    private int guesses  = 0;
+    private int clicks   = 0;
+    private int total    = 0;
+    private int attempts = 0;
     private List<ImagePuzzle> puzzles;
 
     @Override
@@ -128,8 +132,17 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
             if (total == 0 || guesses/((float) total) > 0.5) {
                 showFinish();
             } else {
-                showFinish();
-                //TODO: reload
+                attempts++;
+                if (attempts >= MAX_ATTEMPT) {
+                    Toast.makeText(this, "Вы пытались...", Toast.LENGTH_SHORT).show();
+                    showFinish();
+                } else {
+                    Toast.makeText(this, "Слишком много ошибок!", Toast.LENGTH_SHORT).show();
+                    puzzles = null;
+                    guesses = 0;
+                    clicks = 0;
+                    getLoaderManager().initLoader(0, null, this).forceLoad();
+                }
             }
         }
     }
