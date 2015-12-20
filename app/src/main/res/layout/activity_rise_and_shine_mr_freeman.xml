@@ -18,11 +18,19 @@
         android:orientation="vertical"
         android:fillViewport="false">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_gravity="center_horizontal|top" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/imagesList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/rise_and_shine_element_layout" />
+            tools:listitem="@layout/rise_and_shine_element_layout"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </LinearLayout>
 
@@ -41,7 +49,8 @@
             android:layout_gravity="center"
             android:background="@color/black_overlay"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:visibility="gone"
+            tools:visibility="visible" >
 
             <Button
                 style="?metaButtonBarButtonStyle"
@@ -53,6 +62,7 @@
                 android:textColor="#ffffff"
                 android:text="Отключить будильник" />
         </LinearLayout>
+
     </FrameLayout>
 
     <!-- This FrameLayout insets its children based on system windows using

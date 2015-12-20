@@ -3,10 +3,13 @@ package com.example.av.alarm_clock.alarm_ringer;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,9 +23,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.loaders.ImageLoader;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
 
@@ -31,7 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
+public class RiseAndShineMrFreemanActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<List<ImagePuzzle>>, ImagePuzzle.OnGuessListener {
     public static final String GUESSES = "guesses";
     public static final String IMAGES_ARRAY = "imagesArray";
 
@@ -39,10 +45,7 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
     private RecyclerView imagesList;
     private LinearLayout fullscreenContentControls;
     private Button button;
-
-    private static final int NEED_FRIEND = 3;
-    private static final int NEED_OTHERS = 3;
-    private static final int NEED_TOTAL  = NEED_FRIEND + NEED_OTHERS;
+    private ProgressBar progressBar;
 
     private int guesses = 0;
     private int clicks  = 0;
@@ -66,6 +69,7 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
         imagesList = (RecyclerView) findViewById(R.id.imagesList);
         fullscreenContentControls = (LinearLayout) findViewById(R.id.fullscreen_content_controls);
         button = (Button) findViewById(R.id.button);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,46 +78,10 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
             }
         });
 
-        puzzles = new ArrayList<>();
-        ImageTableHelper imageTableHelper = new ImageTableHelper(this);
-
-        //if (savedInstanceState != null){
-        //    guesses = savedInstanceState.getInt(GUESSES);
-        //    Object[] images = (Object[]) savedInstanceState.get(IMAGES_ARRAY);
-        //} else {
-
-            List<ImageFile> unshownFrs = imageTableHelper.getImageFiles(true, NEED_FRIEND, 0);
-            List<ImageFile> unshownOts = imageTableHelper.getImageFiles(false, NEED_OTHERS, 0);
-
-            int necessaryAdditional = NEED_TOTAL - unshownFrs.size() - unshownOts.size();
-            List<ImageFile> shownFrs = imageTableHelper.getImageFiles(true, necessaryAdditional,
-                    0, true);
-            necessaryAdditional = necessaryAdditional - shownFrs.size();
-            List<ImageFile> shownOts = imageTableHelper.getImageFiles(false, necessaryAdditional,
-                    0, true);
-
-            ImagePuzzle.addListToList(this, puzzles, unshownFrs);
-            ImagePuzzle.addListToList(this, puzzles, unshownOts);
-            ImagePuzzle.addListToList(this, puzzles, shownFrs);
-            ImagePuzzle.addListToList(this, puzzles, shownOts);
-
-            // Randomizing puzzles order
-            Collections.shuffle(puzzles);
-        //}
-        for (ImagePuzzle puzzle : puzzles) {
-            puzzle.setOnGuessListener(puzzleListener);
-            puzzle.getImageFile().setShown(true);
-            imageTableHelper.updateImageFile(puzzle.getImageFile());
-        }
-
-        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this, puzzles);
-        imagesList.setAdapter(puzzleAdapter);
         imagesList.setLayoutManager(new LinearLayoutManager(this));
         imagesList.addItemDecoration(new PuzzleDecoration());
 
-        total = puzzles.size();
-        checkFinish();
-
+        getLoaderManager().initLoader(0, null, this);
         startRinging();
     }
 
@@ -138,17 +106,13 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
         finish();
     }
 
-    private PuzzleListener puzzleListener = new PuzzleListener();
-
-    public class PuzzleListener implements ImagePuzzle.OnGuessListener {
-        @Override
-        public void onGuess(ImagePuzzle puzzle) {
-            clicks++;
-            if (puzzle.getState().equals(ImagePuzzle.State.RECOGNIZED)) {
-                guesses++;
-            }
-            checkFinish();
+    @Override
+    public void onGuess(ImagePuzzle puzzle) {
+        clicks++;
+        if (puzzle.getState().equals(ImagePuzzle.State.RECOGNIZED)) {
+            guesses++;
         }
+        checkFinish();
     }
 
     @Override
@@ -172,5 +136,33 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
 
     private void showFinish() {
         fullscreenContentControls.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public Loader<List<ImagePuzzle>> onCreateLoader(int id, Bundle args) {
+        return new ImageLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<ImagePuzzle>> loader, List<ImagePuzzle> data) {
+        puzzles = data;
+
+        for (ImagePuzzle puzzle : puzzles) {
+            puzzle.setOnGuessListener(this);
+        }
+
+        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this, puzzles);
+        imagesList.setAdapter(puzzleAdapter);
+
+        imagesList.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+
+        total = puzzles.size();
+        checkFinish();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<ImagePuzzle>> loader) {
+        // TODO: something...
     }
 }
