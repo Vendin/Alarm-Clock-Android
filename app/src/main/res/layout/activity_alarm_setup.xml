@@ -40,7 +40,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/input_name"
                     android:layout_gravity="left|bottom"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:focusableInTouchMode="true"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -58,7 +59,9 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:id="@+id/time">
+                android:id="@+id/time"
+                android:transitionGroup="false"
+                android:onClick="onClickTime">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -85,7 +88,9 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:id="@+id/day">
+                android:id="@+id/day"
+                android:nestedScrollingEnabled="false"
+                android:onClick="onClickDay">
                 <TextView
                     style="@style/Title"
                     android:layout_width="wrap_content"
@@ -114,9 +119,6 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/title_signal_settings"
                 android:text="@string/title_signal_settings"
-                android:layout_below="@+id/scrollView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 style="@style/TitleGeneralSettings"/>
             <FrameLayout
                 android:layout_width="match_parent"

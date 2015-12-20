@@ -1,5 +1,10 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +12,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -16,6 +25,9 @@ import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -25,11 +37,17 @@ public class AlarmSetup extends AppCompatActivity {
     private Integer alarmID;
     private TimePicker timePicker;
 
+    protected TextView input_time;
+    protected EditText input_name;
+    protected TextView input_day;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_setup);
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         //timePicker = (TimePicker) findViewById(R.id.timePicker);
 
 //        GregorianCalendar now = new GregorianCalendar();
@@ -49,15 +67,87 @@ public class AlarmSetup extends AppCompatActivity {
 //            }
 //        }
 
-//        TextView textView = (TextView)findViewById(R.id.text1);
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast toast = Toast.makeText(getApplicationContext(), "111", Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
-//        });
+        input_time = (TextView)findViewById(R.id.input_time);
+        input_name = (EditText)findViewById(R.id.input_name);
+        input_day = (TextView)findViewById(R.id.input_day);
+
     }
+
+    public void onClickTime(View v){
+        openDialogTime();
+    }
+
+    protected void openDialogTime(){
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, myCallBack, 00, 00, true);
+        timePickerDialog.setTitle("Введите время");
+        timePickerDialog.show();
+    }
+
+    TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hour, int minute) {
+            input_time.setText(hour + ":" + minute);
+        }
+    };
+
+    public void onClickDay(View v){
+        opentDialogDay();
+    }
+
+    private void opentDialogDay() {
+
+        final CharSequence[] items = {
+                "Понедельник",
+                " Вторник ",
+                " Среда ",
+                " Четверг",
+                " Пятница",
+                " Суббота",
+                " Воскресение"
+        };
+
+        final CharSequence[] it = {
+                "Пн",
+                " Вт",
+                " Ср ",
+                " Чт",
+                " Пт",
+                " Сб",
+                " Вс"
+        };
+        final ArrayList seletedItems=new ArrayList();
+        boolean check[] = {false, false, true, false, true, false, false};
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Выберете дни, в которые будет повторяться будильник.")
+                .setMultiChoiceItems(items, check, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
+                        if (isChecked) {
+                            seletedItems.add(indexSelected);
+                        } else if (seletedItems.contains(indexSelected)) {
+                            seletedItems.remove(Integer.valueOf(indexSelected));
+                        }
+                    }
+                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String result = "";
+                        for(int i = 0; i < seletedItems.size(); ++i){
+                            result += it[(int)seletedItems.get(i)];
+                        }
+                        if(result.equals(new String(""))){
+                            result = "Никогда";
+                        }
+                        input_day.setText(result);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                }).create();
+        dialog.show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
