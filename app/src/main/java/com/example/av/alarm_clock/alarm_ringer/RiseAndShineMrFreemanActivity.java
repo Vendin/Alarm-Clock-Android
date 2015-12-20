@@ -1,6 +1,8 @@
 package com.example.av.alarm_clock.alarm_ringer;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -46,8 +48,6 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
     private int clicks  = 0;
     private int total   = 0;
     private List<ImagePuzzle> puzzles;
-
-    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,20 +128,13 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity {
     }
 
     public void startRinging() {
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setVolume(1.0f, 1.0f);
-        try {
-            mediaPlayer.setDataSource(this,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(this, MosEisleyOrchestraService.class);
+        startService(intent);
     }
 
     public void stopRinging() {
-        mediaPlayer.stop();
+        Intent intent = new Intent(this, MosEisleyOrchestraService.class);
+        stopService(intent);
         finish();
     }
 
