@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
 
         public ImageView imageView;
         public ImageView resultView;
+        private StateListDrawable stateListDrawable;
 
         public Button isFriendButton;
         public Button isNotFriendButton;
@@ -59,6 +61,17 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
 
             rowView.setTag(HOLDER_TAG, this);
 
+            Context context = rowView.getContext();
+            Drawable guessed = context.getResources().getDrawable(R.drawable.ic_mood_black_48dp);
+            Drawable misrecognized = context.getResources().getDrawable(R.drawable.ic_mood_bad_black_48dp);
+
+            stateListDrawable = new StateListDrawable();
+            stateListDrawable.addState(new int[]{R.attr.unguessed}, null);
+            stateListDrawable.addState(new int[]{R.attr.recognized}, guessed);
+            stateListDrawable.addState(new int[]{R.attr.misrecognized}, misrecognized);
+
+            resultView.setImageDrawable(stateListDrawable);
+
             //imageView.setAdjustViewBounds(true);
             //imageView.setMaxHeight(height);
            // imageView.setMaxWidth(width);
@@ -73,24 +86,24 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
 
             Context context = rowView.getContext();
 
-            Drawable drawable = context.getResources().getDrawable(R.drawable.ic_mood_black_48dp);
             int color = Color.BLACK;
             int visibility = View.GONE;
             boolean buttonActiveness = true;
 
             switch(puzzleState) {
                 case MISRECOGNIZED:
-                    drawable = context.getResources().getDrawable(R.drawable.ic_mood_bad_black_48dp);
+                    stateListDrawable.setState(new int[]{R.attr.misrecognized});
                     color = context.getResources().getColor(R.color.not_ok);
                     visibility = View.VISIBLE;
                     buttonActiveness = false;
                     break;
                 case UNGUESSED:
+                    stateListDrawable.setState(new int[]{R.attr.unguessed});
                     visibility = View.GONE;
                     buttonActiveness = true;
                     break;
                 case RECOGNIZED:
-                    drawable = context.getResources().getDrawable(R.drawable.ic_mood_black_48dp);
+                    stateListDrawable.setState(new int[]{R.attr.recognized});
                     color = context.getResources().getColor(R.color.ok);
                     visibility = View.VISIBLE;
                     buttonActiveness = false;
@@ -100,7 +113,6 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
             // Android has not tinting support in older versions...
             // That's such a pity!
             // drawable.setTint(color);
-            resultView.setImageDrawable(drawable);
             if (visibility == View.VISIBLE && resultView.getVisibility() == View.GONE) {
                 resultView.setAlpha(0f);
                 resultView.setVisibility(visibility);
