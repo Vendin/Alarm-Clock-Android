@@ -6,7 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
@@ -26,24 +30,33 @@ public class AlarmSetup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_setup);
 
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        //timePicker = (TimePicker) findViewById(R.id.timePicker);
 
-        GregorianCalendar now = new GregorianCalendar();
-        timePicker.setCurrentHour(now.get(Calendar.HOUR_OF_DAY));
-        timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
+//        GregorianCalendar now = new GregorianCalendar();
+//        timePicker.setCurrentHour(now.get(Calendar.HOUR_OF_DAY));
+//        timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
+//
+//        Intent callerIntent = getIntent();
+//        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
+//            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
+//            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
+//            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
+//            if (alarm != null) {
+//                timePicker.setCurrentHour((int) alarm.getHour());
+//                timePicker.setCurrentMinute((int) alarm.getMinute());
+//            } else {
+//                alarmID = null;
+//            }
+//        }
 
-        Intent callerIntent = getIntent();
-        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
-            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
-            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
-            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
-            if (alarm != null) {
-                timePicker.setCurrentHour((int) alarm.getHour());
-                timePicker.setCurrentMinute((int) alarm.getMinute());
-            } else {
-                alarmID = null;
-            }
-        }
+//        TextView textView = (TextView)findViewById(R.id.text1);
+//        textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast toast = Toast.makeText(getApplicationContext(), "111", Toast.LENGTH_SHORT);
+//                toast.show();
+//            }
+//        });
     }
 
     @Override

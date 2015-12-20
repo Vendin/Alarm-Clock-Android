@@ -11,4 +11,25 @@
 
     <string name="title_activity_rise_and_shine_mr_freeman">С добрым утром!</string>
 
+
+    <!-- Строчки экрана создания будильника -->
+
+    <string name="title_general_settings">Общие настройки</string>
+    <string name="title_add_name_alarm_clock">Название будильника</string>
+    <string name="title_add_time_alarm_clock">Время будильника</string>
+    <string name="title_add_day_alarm_clock">Дни недели</string>
+
+    <string name="title_signal_settings">Настройки сигнала</string>
+    <string name="title_add_signal_alarm_clock">Сигнал</string>
+    <string name="title_add_vibration_alarm_clock">Вибрация</string>
+    <string name="title_switch_off">Выключена</string>
+    <string name="title_switch_on">Включена</string>
+    <string name="title_disable_settings">Настройки отключения</string>
+    <string name="title_add_count_img_alarm_clock">Колличество фотографий</string>
+
+
+
+
+
+
 </resources>

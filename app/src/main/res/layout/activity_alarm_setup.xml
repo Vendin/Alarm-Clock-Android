@@ -7,12 +7,217 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.av.alarm_clock.alarm_main.AlarmSetup">
+    tools:context="com.example.av.alarm_clock.alarm_main.AlarmSetup"
+    android:id="@+id/l">
 
-    <TimePicker
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timePicker"
+        android:id="@+id/scrollView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/general_settings"
+                android:text="@string/title_general_settings"
+                style="@style/TitleGeneralSettingsFirst" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/name">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/input_name"
+                    android:layout_gravity="left|bottom"
+                    android:inputType="text" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_name_alarm_clock"
+                    android:id="@+id/title_name"
+                    android:layout_gravity="left|top"
+                    style="@style/Title" />
+            </FrameLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view0"
+                style="@style/LineView"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/time">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_time_alarm_clock"
+                    android:id="@+id/title_time"
+                    style="@style/Title"
+                    android:layout_gravity="left|top" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="00:00"
+                    android:id="@+id/input_time"
+                    style="@style/Input"
+                    android:layout_gravity="left|bottom" />
+            </FrameLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view1"
+                style="@style/LineView"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/day">
+                <TextView
+                    style="@style/Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_day_alarm_clock"
+                    android:id="@+id/title_day"
+                    android:layout_gravity="left|top" />
+                <TextView
+                    style="@style/Input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Никогда"
+                    android:id="@+id/input_day"
+                    android:layout_gravity="left|bottom" />
+            </FrameLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view2"
+                style="@style/LineView"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/title_signal_settings"
+                android:text="@string/title_signal_settings"
+                android:layout_below="@+id/scrollView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                style="@style/TitleGeneralSettings"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/signal">
+                <TextView
+                    style="@style/Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_signal_alarm_clock"
+                    android:id="@+id/title_signal"
+                    android:layout_gravity="left|top" />
+                <TextView
+                    style="@style/Input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Signal"
+                    android:id="@+id/input_signal"
+                    android:layout_gravity="left|bottom" />
+            </FrameLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view3"
+                style="@style/LineView"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:id="@+id/vibration"
+                android:layout_below="@+id/scrollView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <TextView
+                    style="@style/Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_vibration_alarm_clock"
+                    android:id="@+id/title_vibration"
+                    android:layout_gravity="left|top" />
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_switch_off"
+                    android:id="@+id/switch1"
+                    android:layout_margin="15dp"
+                    android:layout_gravity="right|center_vertical" />
+            </FrameLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view4"
+                style="@style/LineView"/>
+
+            <TextView
+                style="@style/TitleGeneralSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/textView"
+                android:text="@string/title_disable_settings"
+                android:layout_below="@+id/scrollView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view5"
+                style="@style/LineView"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/layout_count_img"
+                android:layout_below="@+id/scrollView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <TextView
+                    style="@style/Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_count_img_alarm_clock"
+                    android:id="@+id/title_count_img"
+                    android:layout_gravity="left|top" />
+
+                <TextView
+                    style="@style/Input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="3"
+                    android:id="@+id/count_img"
+                    android:layout_gravity="left|bottom" />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>
