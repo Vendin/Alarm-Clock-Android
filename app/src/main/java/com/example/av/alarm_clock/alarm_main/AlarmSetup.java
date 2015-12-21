@@ -15,8 +15,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -40,10 +42,12 @@ public class AlarmSetup extends AppCompatActivity {
     protected TextView input_time;
     protected EditText input_name;
     protected TextView input_day;
+    protected Switch switchVibration;
+
     protected ArrayList seletedItems=new ArrayList();
 
     final CharSequence[] fullDate = {
-            "Понедельник",
+            " Понедельник",
             " Вторник ",
             " Среда ",
             " Четверг",
@@ -91,6 +95,21 @@ public class AlarmSetup extends AppCompatActivity {
         input_name = (EditText)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
 
+
+        switchVibration = (Switch) findViewById(R.id.switch1);
+        switchVibration.setChecked(false);
+        switchVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    switchVibration.setText("Включена");
+                } else {
+//                    Toast.makeText(getApplicationContext(), "SET OFF", Toast.LENGTH_SHORT).show();
+                    switchVibration.setText("Выключена");
+                }
+            }
+        });
     }
 
     public void onClickTime(View v){
