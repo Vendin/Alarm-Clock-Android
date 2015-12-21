@@ -195,9 +195,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:id="@+id/layout_count_img"
-                android:layout_below="@+id/scrollView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:nestedScrollingEnabled="false"
+                android:onClick="onClickCountImg">
                 <TextView
                     style="@style/Title"
                     android:layout_width="wrap_content"
@@ -212,7 +211,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="3"
+                    android:text="5"
                     android:id="@+id/count_img"
                     android:layout_gravity="left|bottom" />
             </FrameLayout>

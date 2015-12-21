@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -43,6 +44,11 @@ public class AlarmSetup extends AppCompatActivity {
     protected TextView input_name;
     protected TextView input_day;
     protected Switch switchVibration;
+    protected TextView input_count_img;
+    protected TextView input_count_friends_img;
+
+
+
 
     protected ArrayList seletedItems=new ArrayList();
 
@@ -94,6 +100,9 @@ public class AlarmSetup extends AppCompatActivity {
         input_time = (TextView)findViewById(R.id.input_time);
         input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
+        input_count_img = (TextView)findViewById(R.id.count_img);
+        input_count_friends_img = (TextView)findViewById(R.id.count_friends_img);
+
 
 
         switchVibration = (Switch) findViewById(R.id.switch1);
@@ -133,7 +142,6 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     private void opentDialogDay() {
-
         boolean check[] = {false, false, false, false, false, false, false};
         for(int i = 0; i < seletedItems.size(); ++i){
             check[(int)seletedItems.get(i)] = true;
@@ -171,6 +179,10 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     public void onClickName(View v) {
+        openDialogName();
+    }
+
+    protected void openDialogName(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Введите название будильника");
         //alert.setMessage("");
@@ -183,6 +195,35 @@ public class AlarmSetup extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String srt = input.getEditableText().toString();
                 input_name.setText(srt);
+            }
+        });
+        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alert.create();
+        alertDialog.show();
+    }
+
+    public void onClickCountImg(View v){
+        openDialogCountImg();
+    }
+
+    public void openDialogCountImg(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Выберете количество всех фотографий");
+        final NumberPicker input = new NumberPicker(this);
+        input.setMaxValue(10);
+        input.setMinValue(1);
+        input.setValue(Integer.parseInt(input_count_img.getText().toString()));
+        input.setWrapSelectorWheel(false);
+        input.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+        alert.setView(input);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                input_count_img.setText(""+input.getValue());
             }
         });
         alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {

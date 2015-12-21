@@ -25,7 +25,9 @@
     <string name="title_switch_off">Выключена</string>
     <string name="title_switch_on">Включена</string>
     <string name="title_disable_settings">Настройки отключения</string>
-    <string name="title_add_count_img_alarm_clock">Колличество фотографий</string>
+    <string name="title_add_count_img_alarm_clock">Фотографий всего </string>
+    <string name="title_add_count_friends_img_alarm_clock">Фотогафий друзей</string>
+
 
 
 
