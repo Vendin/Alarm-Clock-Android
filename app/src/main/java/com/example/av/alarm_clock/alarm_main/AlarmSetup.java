@@ -40,7 +40,27 @@ public class AlarmSetup extends AppCompatActivity {
     protected TextView input_time;
     protected EditText input_name;
     protected TextView input_day;
+    protected ArrayList seletedItems=new ArrayList();
 
+    final CharSequence[] fullDate = {
+            "Понедельник",
+            " Вторник ",
+            " Среда ",
+            " Четверг",
+            " Пятница",
+            " Суббота",
+            " Воскресение"
+    };
+
+    final CharSequence[] shortDate = {
+            " Пн",
+            " Вт",
+            " Ср ",
+            " Чт",
+            " Пт",
+            " Сб",
+            " Вс"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,31 +114,13 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     private void opentDialogDay() {
-
-        final CharSequence[] items = {
-                "Понедельник",
-                " Вторник ",
-                " Среда ",
-                " Четверг",
-                " Пятница",
-                " Суббота",
-                " Воскресение"
-        };
-
-        final CharSequence[] it = {
-                "Пн",
-                " Вт",
-                " Ср ",
-                " Чт",
-                " Пт",
-                " Сб",
-                " Вс"
-        };
-        final ArrayList seletedItems=new ArrayList();
-        boolean check[] = {false, false, true, false, true, false, false};
+        boolean check[] = {false, false, false, false, false, false, false};
+        for(int i = 0; i < seletedItems.size(); ++i){
+            check[(int)seletedItems.get(i)] = true;
+        }
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Выберете дни, в которые будет повторяться будильник.")
-                .setMultiChoiceItems(items, check, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(fullDate, check, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
                         if (isChecked) {
@@ -132,7 +134,7 @@ public class AlarmSetup extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         String result = "";
                         for(int i = 0; i < seletedItems.size(); ++i){
-                            result += it[(int)seletedItems.get(i)];
+                            result += shortDate[(int)seletedItems.get(i)];
                         }
                         if(result.equals(new String(""))){
                             result = "Никогда";
