@@ -40,7 +40,7 @@ public class AlarmSetup extends AppCompatActivity {
     private TimePicker timePicker;
 
     protected TextView input_time;
-    protected EditText input_name;
+    protected TextView input_name;
     protected TextView input_day;
     protected Switch switchVibration;
 
@@ -92,7 +92,7 @@ public class AlarmSetup extends AppCompatActivity {
 //        }
 
         input_time = (TextView)findViewById(R.id.input_time);
-        input_name = (EditText)findViewById(R.id.input_name);
+        input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
 
 
@@ -133,6 +133,7 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     private void opentDialogDay() {
+
         boolean check[] = {false, false, false, false, false, false, false};
         for(int i = 0; i < seletedItems.size(); ++i){
             check[(int)seletedItems.get(i)] = true;
@@ -160,7 +161,7 @@ public class AlarmSetup extends AppCompatActivity {
                         }
                         input_day.setText(result);
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -169,32 +170,58 @@ public class AlarmSetup extends AppCompatActivity {
         dialog.show();
     }
 
+    public void onClickName(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Введите название будильника");
+        //alert.setMessage("");
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
-        if (alarmID == null) {
-            MenuItem item = menu.findItem(R.id.deleteAction);
-            item.setVisible(false);
-        }
-        return true;
+        final EditText input = new EditText(this);
+        input.setText(input_name.getText());
+        alert.setView(input);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String srt = input.getEditableText().toString();
+                input_name.setText(srt);
+            }
+        });
+        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alert.create();
+        alertDialog.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.saveAction:
-                saveAlarm();
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-            case R.id.deleteAction:
-                deleteAlarm();
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+
+
+
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+            getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
+            if (alarmID == null) {
+                MenuItem item = menu.findItem(R.id.deleteAction);
+                item.setVisible(false);
+            }
+            return true;
         }
-    }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.saveAction:
+                    saveAlarm();
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+                case R.id.deleteAction:
+                    deleteAlarm();
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
 
     protected void saveAlarm() {
         int hour = timePicker.getCurrentHour();
