@@ -45,10 +45,6 @@ public class AlarmSetup extends AppCompatActivity {
     protected TextView input_day;
     protected Switch switchVibration;
     protected TextView input_count_img;
-    protected TextView input_count_friends_img;
-
-
-
 
     protected ArrayList seletedItems=new ArrayList();
 
@@ -101,9 +97,6 @@ public class AlarmSetup extends AppCompatActivity {
         input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
         input_count_img = (TextView)findViewById(R.id.count_img);
-        input_count_friends_img = (TextView)findViewById(R.id.count_friends_img);
-
-
 
         switchVibration = (Switch) findViewById(R.id.switch1);
         switchVibration.setChecked(false);
