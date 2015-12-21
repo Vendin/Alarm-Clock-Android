@@ -128,21 +128,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:id="@+id/signal">
-                <TextView
-                    style="@style/Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/title_add_signal_alarm_clock"
-                    android:id="@+id/title_signal"
-                    android:layout_gravity="left|top" />
-                <TextView
+                <fragment android:name="com.example.av.alarm_clock.alarm_main.SoundPreferenceFragment"
+                    android:id="@+id/alarm_preference"
                     style="@style/Input"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Signal"
-                    android:id="@+id/input_signal"
                     android:layout_gravity="left|bottom" />
             </FrameLayout>
             <View

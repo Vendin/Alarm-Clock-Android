@@ -2,6 +2,7 @@ package com.example.av.alarm_clock.alarm_main;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,6 +46,7 @@ public class AlarmSetup extends AppCompatActivity {
     protected TextView input_day;
     protected Switch switchVibration;
     protected TextView input_count_img;
+    protected SoundPreferenceFragment soundPreferenceFragment;
 
     protected ArrayList seletedItems=new ArrayList();
 
@@ -97,6 +99,7 @@ public class AlarmSetup extends AppCompatActivity {
         input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
         input_count_img = (TextView)findViewById(R.id.count_img);
+        soundPreferenceFragment = (SoundPreferenceFragment) getFragmentManager().findFragmentById(R.id.alarm_preference);
 
         switchVibration = (Switch) findViewById(R.id.switch1);
         switchVibration.setChecked(false);
