@@ -32,6 +32,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 
 public class AlarmSetup extends AppCompatActivity {
@@ -153,6 +154,7 @@ public class AlarmSetup extends AppCompatActivity {
                 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        Collections.sort(seletedItems);
                         String result = "";
                         for(int i = 0; i < seletedItems.size(); ++i){
                             result += shortDate[(int)seletedItems.get(i)];
@@ -205,7 +207,7 @@ public class AlarmSetup extends AppCompatActivity {
 
     public void openDialogCountImg(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Выберете количество всех фотографий");
+        alert.setTitle("Выберете количество всего фотографий");
         final NumberPicker input = new NumberPicker(this);
         input.setMaxValue(10);
         input.setMinValue(1);
