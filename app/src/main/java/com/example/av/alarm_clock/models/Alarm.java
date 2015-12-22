@@ -15,6 +15,8 @@ public class Alarm {
     private short hour;
     private short minute;
     private boolean enabled;
+    private boolean vibration;
+    private String name;
 
     public Alarm(){}
 
@@ -23,6 +25,8 @@ public class Alarm {
         setMinute(cursor.getShort(AlarmContract.PROJECTION_MINUTE_INDEX));
         setEnabled(cursor.getInt(AlarmContract.PROJECTION_IS_ENABLED_INDEX) > 0);
         setId(cursor.getInt(AlarmContract.PROJECTION_ID_INDEX));
+        setVibration(cursor.getInt(AlarmContract.PROJECTION_VIBRATION_INDEX) > 0);
+        setName(cursor.getString(AlarmContract.PROJECTION_NAME_INDEX));
     }
 
     public void setId(Integer id) {
@@ -58,6 +62,8 @@ public class Alarm {
         values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_HOUR, getHour());
         values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_MINUTE, getMinute());
         values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED, isEnabled());
+        values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_VIBRATION, isVibration());
+        values.put(AlarmContract.AlarmEntry.COLUMN_NAME_ALARM_NAME, getName());
         return values;
     }
 
@@ -71,5 +77,21 @@ public class Alarm {
         } else {
             throw new IllegalArgumentException("Minute can be from 0 to 59");
         }
+    }
+
+    public boolean isVibration() {
+        return vibration;
+    }
+
+    public void setVibration(boolean vibration) {
+        this.vibration = vibration;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
