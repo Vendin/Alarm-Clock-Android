@@ -309,7 +309,7 @@ public class AlarmSetup extends AppCompatActivity {
         }
         alarmToSave.setHour((short) hour);
         alarmToSave.setMinute((short) minute);
-        
+
         if (alarmToSave.getId() != null) {
             alarmTableHelper.updateAlarm(alarmToSave);
         } else {
