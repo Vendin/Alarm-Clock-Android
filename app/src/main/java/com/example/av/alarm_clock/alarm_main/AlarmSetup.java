@@ -44,7 +44,6 @@ public class AlarmSetup extends AppCompatActivity {
     public static final String ALARM_ID_PARAMETER = AlarmSetup.class.getCanonicalName() + ":ALARM_ID_PARAMETER";
 
     private Integer alarmID;
-    private TimePicker timePicker;
 
     private String name;
     private int choosenHour;
@@ -112,8 +111,11 @@ public class AlarmSetup extends AppCompatActivity {
             if (alarm != null) {
                 presetHour = alarm.getHour();
                 presetMinute = alarm.getMinute();
-                //presetVibrate = alarm.isVibration();
-                //presetName = alarm.getName();
+                presetVibrate = alarm.isVibration();
+                presetName = alarm.getName();
+                presetDayMask = alarm.getDayMask();
+                presetRingtone = alarm.getRingtone();
+                presetCountImage = alarm.getCountPhoto();
             } else {
                 alarmID = null;
             }
@@ -199,7 +201,7 @@ public class AlarmSetup extends AppCompatActivity {
 
     protected void openDialogName(){
         final EditText input = new EditText(this);
-        input.setText(input_name.getText());
+        input.setText(name);
 
         new AlertDialog.Builder(this)
         .setTitle("Введите название будильника")

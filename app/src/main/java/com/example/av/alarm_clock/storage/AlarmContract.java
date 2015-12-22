@@ -23,7 +23,10 @@ public final class AlarmContract {
                     AlarmEntry.COLUMN_NAME_ALARM_MINUTE + "<=59) NOT NULL" + COMMA_SEP +
                     AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED + BOOL_TYPE + " NOT NULL" + COMMA_SEP +
                     AlarmEntry.COLUMN_NAME_ALARM_NAME + " TEXT" + COMMA_SEP +
-                    AlarmEntry.COLUMN_NAME_ALARM_VIBRATION + BOOL_TYPE + " NOT NULL" +
+                    AlarmEntry.COLUMN_NAME_ALARM_VIBRATION + BOOL_TYPE + " NOT NULL" + COMMA_SEP +
+                    AlarmEntry.COLUMN_NAME_ALARM_RINGTONE + " TEXT" + COMMA_SEP +
+                    AlarmEntry.COLUMN_NAME_ALARM_COUNT_PHOTO + SMALL_TYPE + " NOT NULL" + COMMA_SEP +
+                    AlarmEntry.COLUMN_NAME_ALARM_DAYMASK + SMALL_TYPE + " NOT NULL" +
                     ")";
 
     static final String SQL_DELETE_ENTRIES =
@@ -35,7 +38,10 @@ public final class AlarmContract {
             AlarmEntry.COLUMN_NAME_ALARM_MINUTE,
             AlarmEntry.COLUMN_NAME_ALARM_IS_ENABLED,
             AlarmEntry.COLUMN_NAME_ALARM_NAME,
-            AlarmEntry.COLUMN_NAME_ALARM_VIBRATION
+            AlarmEntry.COLUMN_NAME_ALARM_VIBRATION,
+            AlarmEntry.COLUMN_NAME_ALARM_RINGTONE,
+            AlarmEntry.COLUMN_NAME_ALARM_COUNT_PHOTO,
+            AlarmEntry.COLUMN_NAME_ALARM_DAYMASK
     };
 
     public static final int PROJECTION_ID_INDEX = 0;
@@ -44,6 +50,9 @@ public final class AlarmContract {
     public static final int PROJECTION_IS_ENABLED_INDEX = 3;
     public static final int PROJECTION_NAME_INDEX = 4;
     public static final int PROJECTION_VIBRATION_INDEX = 5;
+    public static final int PROJECTION_RINGTONE_INDEX = 6;
+    public static final int PROJECTION_COUNT_PHOTO_INDEX = 7;
+    public static final int PROJECTION_DAYMASK_INDEX = 8;
 
     public static abstract class AlarmEntry implements BaseColumns {
         public static final String TABLE_NAME = "alarm";
@@ -52,5 +61,8 @@ public final class AlarmContract {
         public static final String COLUMN_NAME_ALARM_IS_ENABLED = "is_enabled";
         public static final String COLUMN_NAME_ALARM_NAME = "alarm_name";
         public static final String COLUMN_NAME_ALARM_VIBRATION = "vibration";
+        public static final String COLUMN_NAME_ALARM_RINGTONE = "ringtone";
+        public static final String COLUMN_NAME_ALARM_COUNT_PHOTO = "count_photo";
+        public static final String COLUMN_NAME_ALARM_DAYMASK = "daymask";
     }
 }
