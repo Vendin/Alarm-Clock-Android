@@ -60,7 +60,9 @@
 
         <service
             android:name=".alarm_ringer.ImageDownloadIntentService"
-            android:exported="false"></service>
+            android:exported="false"/>
+        <service android:name=".alarm_ringer.MosEisleyOrchestraService"
+            android:exported="false"/>
     </application>
 
 </manifest>
