@@ -2,6 +2,9 @@
 
     <color name="black_overlay">#cc000000</color>
 
+    <color name="blue_500">#2196F3</color>
+    <color name="grey_500">#9E9E9E</color>
+
     <color name="ok">#1B5E20</color>
     <color name="not_ok">#B71C1C</color>
 </resources>
