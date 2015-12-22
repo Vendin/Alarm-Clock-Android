@@ -1,5 +1,6 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
@@ -7,6 +8,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,9 +46,12 @@ public class AlarmSetup extends AppCompatActivity {
     private Integer alarmID;
     private TimePicker timePicker;
 
+    private Uri chosenRingtone;
+
     protected TextView input_time;
     protected TextView input_name;
     protected TextView input_day;
+    protected TextView input_signal;
     protected Switch switchVibration;
     protected TextView input_count_img;
     protected SoundPreferenceFragment soundPreferenceFragment;
@@ -99,8 +106,8 @@ public class AlarmSetup extends AppCompatActivity {
         input_time = (TextView)findViewById(R.id.input_time);
         input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
+        input_signal = (TextView) findViewById(R.id.input_signal);
         input_count_img = (TextView)findViewById(R.id.count_img);
-        soundPreferenceFragment = (SoundPreferenceFragment) getFragmentManager().findFragmentById(R.id.alarm_preference);
 
         switchVibration = (Switch) findViewById(R.id.switch1);
         switchVibration.setChecked(false);
@@ -221,7 +228,7 @@ public class AlarmSetup extends AppCompatActivity {
         alert.setView(input);
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                input_count_img.setText(""+input.getValue());
+                input_count_img.setText("" + input.getValue());
             }
         });
         alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -233,34 +240,56 @@ public class AlarmSetup extends AppCompatActivity {
         alertDialog.show();
     }
 
+    public void onClickSignal(View v) {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Выберите сигнал");
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, chosenRingtone);
+        this.startActivityForResult(intent, 5);
+    }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent)
+    {
+        if (resultCode == Activity.RESULT_OK && requestCode == 5) {
+            Uri uri = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
-            if (alarmID == null) {
-                MenuItem item = menu.findItem(R.id.deleteAction);
-                item.setVisible(false);
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.saveAction:
-                    saveAlarm();
-                    NavUtils.navigateUpFromSameTask(this);
-                    return true;
-                case R.id.deleteAction:
-                    deleteAlarm();
-                    NavUtils.navigateUpFromSameTask(this);
-                    return true;
-                default:
-                    return super.onOptionsItemSelected(item);
+            if (uri != null) {
+                this.chosenRingtone = uri;
+                Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
+                input_signal.setText(ringtone.getTitle(this));
+            } else {
+                this.chosenRingtone = null;
+                input_signal.setText("Signal");
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
+        if (alarmID == null) {
+            MenuItem item = menu.findItem(R.id.deleteAction);
+            item.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.saveAction:
+                saveAlarm();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.deleteAction:
+                deleteAlarm();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     protected void saveAlarm() {
         int hour = timePicker.getCurrentHour();
