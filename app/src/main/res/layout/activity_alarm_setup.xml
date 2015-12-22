@@ -34,14 +34,9 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:id="@+id/name">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/input_name"
-                    android:layout_gravity="left|bottom"
-                    android:inputType="text"
-                    android:focusableInTouchMode="true"/>
+                android:id="@+id/name"
+                android:onClick="onClickName">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -50,6 +45,15 @@
                     android:id="@+id/title_name"
                     android:layout_gravity="left|top"
                     style="@style/Title" />
+
+                <TextView
+                    style="@style/Input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text=""
+                    android:id="@+id/input_name"
+                    android:layout_gravity="left|bottom" />
             </FrameLayout>
             <View
                 android:layout_width="fill_parent"
@@ -120,32 +124,7 @@
                 android:id="@+id/title_signal_settings"
                 android:text="@string/title_signal_settings"
                 style="@style/TitleGeneralSettings"/>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:id="@+id/signal">
-                <TextView
-                    style="@style/Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/title_add_signal_alarm_clock"
-                    android:id="@+id/title_signal"
-                    android:layout_gravity="left|top" />
-                <TextView
-                    style="@style/Input"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Signal"
-                    android:id="@+id/input_signal"
-                    android:layout_gravity="left|bottom" />
-            </FrameLayout>
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:id="@+id/view3"
-                style="@style/LineView"/>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -169,12 +148,44 @@
                     android:text="@string/title_switch_off"
                     android:id="@+id/switch1"
                     android:layout_margin="15dp"
+                    android:textColor="@color/grey_500"
                     android:layout_gravity="right|center_vertical" />
             </FrameLayout>
+
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:id="@+id/view4"
+                style="@style/LineView"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/signal"
+                android:onClick="onClickSignal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_add_name_alarm_clock"
+                    android:id="@+id/title_signal"
+                    android:layout_gravity="left|top"
+                    style="@style/Title" />
+
+                <TextView
+                    style="@style/Input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Signal"
+                    android:id="@+id/input_signal"
+                    android:layout_gravity="left|bottom" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/view3"
                 style="@style/LineView"/>
 
             <TextView
@@ -187,20 +198,12 @@
                 android:layout_below="@+id/scrollView"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:id="@+id/view5"
-                style="@style/LineView"/>
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:id="@+id/layout_count_img"
-                android:layout_below="@+id/scrollView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
-
+                android:nestedScrollingEnabled="false"
+                android:onClick="onClickCountImg">
                 <TextView
                     style="@style/Title"
                     android:layout_width="wrap_content"
@@ -215,7 +218,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="3"
+                    android:text="5"
                     android:id="@+id/count_img"
                     android:layout_gravity="left|bottom" />
             </FrameLayout>

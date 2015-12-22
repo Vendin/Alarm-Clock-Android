@@ -42,4 +42,15 @@ public class AlarmRegistrator {
             }
         }
     }
+
+    public static void unregisterAlarm(Context context, int alarmId) {
+        Intent intent = new Intent(context, RingADingDingReceiver.class);
+        intent.setAction(RingADingDingReceiver.RING_A_DING_DING);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+    }
 }

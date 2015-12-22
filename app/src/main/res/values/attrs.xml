@@ -9,4 +9,10 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="ImagePuzzleResult">
+        <attr name="recognized" format="integer" />
+        <attr name="unguessed" format="integer" />
+        <attr name="misrecognized" format="integer" />
+    </declare-styleable>
+
 </resources>

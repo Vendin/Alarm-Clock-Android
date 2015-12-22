@@ -1,11 +1,16 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +20,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,6 +37,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 
 public class AlarmSetup extends AppCompatActivity {
@@ -37,10 +46,37 @@ public class AlarmSetup extends AppCompatActivity {
     private Integer alarmID;
     private TimePicker timePicker;
 
-    protected TextView input_time;
-    protected EditText input_name;
-    protected TextView input_day;
+    private Uri chosenRingtone;
 
+    protected TextView input_time;
+    protected TextView input_name;
+    protected TextView input_day;
+    protected TextView input_signal;
+    protected Switch switchVibration;
+    protected TextView input_count_img;
+    protected SoundPreferenceFragment soundPreferenceFragment;
+
+    protected ArrayList seletedItems=new ArrayList();
+
+    final CharSequence[] fullDate = {
+            " Понедельник",
+            " Вторник ",
+            " Среда ",
+            " Четверг",
+            " Пятница",
+            " Суббота",
+            " Воскресение"
+    };
+
+    final CharSequence[] shortDate = {
+            " Пн",
+            " Вт",
+            " Ср ",
+            " Чт",
+            " Пт",
+            " Сб",
+            " Вс"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +104,25 @@ public class AlarmSetup extends AppCompatActivity {
 //        }
 
         input_time = (TextView)findViewById(R.id.input_time);
-        input_name = (EditText)findViewById(R.id.input_name);
+        input_name = (TextView)findViewById(R.id.input_name);
         input_day = (TextView)findViewById(R.id.input_day);
+        input_signal = (TextView) findViewById(R.id.input_signal);
+        input_count_img = (TextView)findViewById(R.id.count_img);
 
+        switchVibration = (Switch) findViewById(R.id.switch1);
+        switchVibration.setChecked(false);
+        switchVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    switchVibration.setText("Включена");
+                } else {
+//                    Toast.makeText(getApplicationContext(), "SET OFF", Toast.LENGTH_SHORT).show();
+                    switchVibration.setText("Выключена");
+                }
+            }
+        });
     }
 
     public void onClickTime(View v){
@@ -94,31 +146,13 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     private void opentDialogDay() {
-
-        final CharSequence[] items = {
-                "Понедельник",
-                " Вторник ",
-                " Среда ",
-                " Четверг",
-                " Пятница",
-                " Суббота",
-                " Воскресение"
-        };
-
-        final CharSequence[] it = {
-                "Пн",
-                " Вт",
-                " Ср ",
-                " Чт",
-                " Пт",
-                " Сб",
-                " Вс"
-        };
-        final ArrayList seletedItems=new ArrayList();
-        boolean check[] = {false, false, true, false, true, false, false};
+        boolean check[] = {false, false, false, false, false, false, false};
+        for(int i = 0; i < seletedItems.size(); ++i){
+            check[(int)seletedItems.get(i)] = true;
+        }
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Выберете дни, в которые будет повторяться будильник.")
-                .setMultiChoiceItems(items, check, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(fullDate, check, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
                         if (isChecked) {
@@ -130,16 +164,17 @@ public class AlarmSetup extends AppCompatActivity {
                 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        Collections.sort(seletedItems);
                         String result = "";
                         for(int i = 0; i < seletedItems.size(); ++i){
-                            result += it[(int)seletedItems.get(i)];
+                            result += shortDate[(int)seletedItems.get(i)];
                         }
                         if(result.equals(new String(""))){
                             result = "Никогда";
                         }
                         input_day.setText(result);
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -148,6 +183,87 @@ public class AlarmSetup extends AppCompatActivity {
         dialog.show();
     }
 
+    public void onClickName(View v) {
+        openDialogName();
+    }
+
+    protected void openDialogName(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Введите название будильника");
+        //alert.setMessage("");
+
+        final EditText input = new EditText(this);
+        input.setText(input_name.getText());
+        alert.setView(input);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String srt = input.getEditableText().toString();
+                input_name.setText(srt);
+            }
+        });
+        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alert.create();
+        alertDialog.show();
+    }
+
+    public void onClickCountImg(View v){
+        openDialogCountImg();
+    }
+
+    public void openDialogCountImg(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Выберете количество всего фотографий");
+        final NumberPicker input = new NumberPicker(this);
+        input.setMaxValue(10);
+        input.setMinValue(1);
+        input.setValue(Integer.parseInt(input_count_img.getText().toString()));
+        input.setWrapSelectorWheel(false);
+        input.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+        alert.setView(input);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                input_count_img.setText("" + input.getValue());
+            }
+        });
+        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alert.create();
+        alertDialog.show();
+    }
+
+    public void onClickSignal(View v) {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Выберите сигнал");
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, chosenRingtone);
+        this.startActivityForResult(intent, 5);
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent)
+    {
+        if (resultCode == Activity.RESULT_OK && requestCode == 5) {
+            Uri uri = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+
+            if (uri != null) {
+                this.chosenRingtone = uri;
+                Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
+                input_signal.setText(ringtone.getTitle(this));
+            } else {
+                this.chosenRingtone = null;
+                input_signal.setText("Signal");
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
