@@ -47,6 +47,8 @@ public class AlarmSetup extends AppCompatActivity {
     private TimePicker timePicker;
 
     private Uri chosenRingtone;
+    private int choosenHour = 0;
+    private int choosenMinute = 0;
 
     protected TextView input_time;
     protected TextView input_name;
@@ -138,6 +140,8 @@ public class AlarmSetup extends AppCompatActivity {
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hour, int minute) {
             input_time.setText(hour + ":" + minute);
+            choosenHour = hour;
+            choosenMinute = minute;
         }
     };
 
@@ -292,8 +296,8 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     protected void saveAlarm() {
-        int hour = timePicker.getCurrentHour();
-        int minute = timePicker.getCurrentMinute();
+        int hour = choosenHour;
+        int minute = choosenMinute;
 
         AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
         Alarm alarmToSave = null;
@@ -301,14 +305,15 @@ public class AlarmSetup extends AppCompatActivity {
             alarmToSave = alarmTableHelper.getAlarm(alarmID);
         if (alarmToSave == null) {
             alarmToSave = new Alarm();
-            alarmToSave.setHour((short) hour);
-            alarmToSave.setMinute((short) minute);
             alarmToSave.setEnabled(true);
-            alarmTableHelper.saveAlarm(alarmToSave);
-        } else {
-            alarmToSave.setHour((short) hour);
-            alarmToSave.setMinute((short) minute);
+        }
+        alarmToSave.setHour((short) hour);
+        alarmToSave.setMinute((short) minute);
+
+        if (alarmToSave.getId() != null) {
             alarmTableHelper.updateAlarm(alarmToSave);
+        } else {
+            alarmTableHelper.saveAlarm(alarmToSave);
         }
     }
 
