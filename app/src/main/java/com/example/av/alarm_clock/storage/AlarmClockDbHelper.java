@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by mikrut on 29.11.15.
  */
 public class AlarmClockDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "AlarmClock.db";
 
     public AlarmClockDbHelper(Context context) {

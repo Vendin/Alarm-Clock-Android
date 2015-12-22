@@ -99,7 +99,7 @@ public class AlarmTableHelper {
         String selection = AlarmEntry._ID + " = ?";
         String[] selectionArgs = { String.valueOf(id) };
         db.delete(AlarmEntry.TABLE_NAME, selection, selectionArgs);
-        registerAlarms();
+        AlarmRegistrator.unregisterAlarm(context, id);
     }
 
     protected void registerAlarms() {

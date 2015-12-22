@@ -7,13 +7,16 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.api.RemoteImage;
 import com.example.av.alarm_clock.api.Requester;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -68,12 +71,13 @@ public class ImageDownloadIntentService extends IntentService {
 
         final int MAX_USED_FOLLOWEES = 5;
         LinkedHashSet<String> followeeIDs = requester.getFolloweeIDs();
+        HashSet<String> allFolloweeIDs = (HashSet<String>) followeeIDs.clone();
         deleteUnusedFollowees(followeeIDs, MAX_USED_FOLLOWEES);
 
         int downloadedFrs = downloadFriendlies(necessary_friendlies_count - unshownFriendlies.size(),
                 followeeIDs, requester, imageTableHelper);
         int downloadedOts = downloadOthers(necessary_others_count - unshownOthers.size(),
-                fetch_size, requester, imageTableHelper);
+                fetch_size, requester, imageTableHelper, allFolloweeIDs);
 
         imageTableHelper.removeOld(true, downloadedFrs);
         imageTableHelper.removeOld(false, downloadedOts);
@@ -81,34 +85,44 @@ public class ImageDownloadIntentService extends IntentService {
 
     private int downloadFriendlies(int downloadNum,  LinkedHashSet<String> followeeIDs,
                                    Requester requester, ImageTableHelper imageTableHelper) {
-        Log.d(this.getClass().getCanonicalName(), "Downloading " + downloadNum + " friendlies");
         final int FOLLOWEE_FETCH_SIZE = 3;
         int downloadedCtr = 0;
 
         for(String fweeID : followeeIDs) {
-            List<ImageFile> photos = requester.getFolloweePhotos(fweeID, FOLLOWEE_FETCH_SIZE);
-            downloadedCtr += downloadList(photos, requester, imageTableHelper, downloadNum);
+            List<RemoteImage> photos = requester.getFolloweePhotos(fweeID, FOLLOWEE_FETCH_SIZE);
+            List<RemoteImage> filteredPhotos = new LinkedList<>();
+            for (RemoteImage photo : photos) {
+                boolean isInDB = imageTableHelper.getImageFile(photo.getMediaId()) != null;
+                if (!isInDB) {
+                    filteredPhotos.add(photo);
+                }
+            }
+            downloadedCtr += downloadList(filteredPhotos, requester, imageTableHelper, downloadNum);
         }
 
-        Log.d(this.getClass().getCanonicalName(), "Downloaded " + downloadedCtr + " friendlies");
         return downloadedCtr;
     }
 
-    private int downloadOthers(int downloadNum, int fetchSize, Requester requester, ImageTableHelper imageTableHelper) {
-        Log.d(this.getClass().getCanonicalName(), "Downloading " + downloadNum + " others");
-
-        List<ImageFile> photos = requester.getOtherPhotos(downloadNum, fetchSize);
-        Log.d(this.getClass().getCanonicalName(), "Found " + photos.size() + " others");
-        int downloadedCtr = downloadList(photos, requester, imageTableHelper, downloadNum);;
-        Log.d(this.getClass().getCanonicalName(), "Downloaded " + downloadedCtr + " others");
+    private int downloadOthers(int downloadNum, int fetchSize, Requester requester,
+                               ImageTableHelper imageTableHelper, HashSet<String> followeeIDs) {
+        List<RemoteImage> photos = requester.getOtherPhotos(downloadNum, fetchSize);
+        List<RemoteImage> filteredPhotos = new LinkedList<>();
+        for (RemoteImage photo : photos) {
+            boolean isFollowees = followeeIDs.contains(photo.getCreatorID());
+            boolean isInDB = imageTableHelper.getImageFile(photo.getMediaId()) != null;
+            if (!isFollowees && !isInDB) {
+                filteredPhotos.add(photo);
+            }
+        }
+        int downloadedCtr = downloadList(filteredPhotos, requester, imageTableHelper, downloadNum);
 
         return downloadedCtr;
     }
 
-    private int downloadList(List<ImageFile> photos, Requester requester,
+    private int downloadList(List<RemoteImage> photos, Requester requester,
                              ImageTableHelper imageTableHelper, int downloadNum) {
         int downloadedCtr = 0;
-        for (ImageFile photo : photos) {
+        for (RemoteImage photo : photos) {
             if (downloadedCtr >= downloadNum) {
                 return downloadedCtr;
             }

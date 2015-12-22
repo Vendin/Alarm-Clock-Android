@@ -92,11 +92,11 @@ public class Requester {
         return ids;
     }
 
-    public LinkedList<ImageFile> getFolloweePhotos(String fweeID, int photoNum) {
+    public LinkedList<RemoteImage> getFolloweePhotos(String fweeID, int photoNum) {
         final String urlTemplate = "users/%s/media/recent";
         final String method = "GET";
 
-        LinkedList<ImageFile> imageFiles = new LinkedList<>();
+        LinkedList<RemoteImage> imageFiles = new LinkedList<>();
         try {
             JSONObject result = getJSONResponse(API_URL + String.format(urlTemplate, fweeID),
                     method);
@@ -106,7 +106,7 @@ public class Requester {
                 JSONArray data = result.getJSONArray("data");
                 for (int i = 0; i < data.length() && imageFiles.size() < photoNum; i++) {
                     JSONObject imageObject = data.getJSONObject(i);
-                    ImageFile imageFile = ImageFile.fromJSONObject(imageObject);
+                    RemoteImage imageFile = RemoteImage.fromJSONObject(imageObject);
                     if (imageFile != null) {
                         imageFile.setFriendly(true);
                         imageFiles.add(imageFile);
@@ -120,14 +120,14 @@ public class Requester {
         return imageFiles;
     }
 
-    public LinkedList<ImageFile> getOtherPhotos(int neededNum, int maxTryNum) {
+    public LinkedList<RemoteImage> getOtherPhotos(int neededNum, int maxTryNum) {
         final String othersUrl = "media/search";
         final String method = "GET";
 
         final double moscowLat = 55.7522200;
         final double moscowLng = 37.6155600;
 
-        LinkedList<ImageFile> imageFiles = new LinkedList<>();
+        LinkedList<RemoteImage> imageFiles = new LinkedList<>();
         try {
             URIBuilder uriBuilder = new URIBuilder(API_URL + othersUrl);
             uriBuilder.addParameter("lat", String.valueOf(moscowLat));
@@ -141,7 +141,7 @@ public class Requester {
                 JSONArray data = response.getJSONArray("data");
                 for (int i = 0; i < maxTryNum && i < data.length() && imageFiles.size() < neededNum; i++) {
                     JSONObject imageObject = data.getJSONObject(i);
-                    ImageFile imageFile = ImageFile.fromJSONObject(imageObject);
+                    RemoteImage imageFile = RemoteImage.fromJSONObject(imageObject);
                     if (imageFile != null) {
                         imageFile.setFriendly(false);
                         imageFiles.add(imageFile);
@@ -157,7 +157,7 @@ public class Requester {
         return imageFiles;
     }
 
-    public boolean downloadPhoto(ImageFile photo) {
+    public boolean downloadPhoto(RemoteImage photo) {
         boolean downloaded = false;
         try {
             final String uri = photo.getPhotoURL();

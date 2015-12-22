@@ -19,6 +19,8 @@ public class ImagePuzzle {
     private Bitmap cachedBitmap;
     private Context context;
 
+    private OnGuessListener onGuessListener;
+
     public ImagePuzzle(Context context, ImageFile imageFile) {
         this.imageFile = imageFile;
         this.context = context;
@@ -33,6 +35,8 @@ public class ImagePuzzle {
             } else {
                 state = State.MISRECOGNIZED;
             }
+            if (onGuessListener != null)
+                onGuessListener.onGuess(this);
         }
         return state;
     }
@@ -56,5 +60,17 @@ public class ImagePuzzle {
         for (ImageFile imageFile : appendable) {
             appendee.add(new ImagePuzzle(context, imageFile));
         }
+    }
+
+    public void setOnGuessListener(OnGuessListener guessListener) {
+        this.onGuessListener = guessListener;
+    }
+
+    public interface OnGuessListener {
+        void onGuess(ImagePuzzle puzzle);
+    }
+
+    public ImageFile getImageFile() {
+        return imageFile;
     }
 }

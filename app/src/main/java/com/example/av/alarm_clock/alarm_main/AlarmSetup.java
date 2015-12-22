@@ -1,5 +1,6 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
@@ -7,6 +8,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,16 +44,27 @@ public class AlarmSetup extends AppCompatActivity {
     public static final String ALARM_ID_PARAMETER = AlarmSetup.class.getCanonicalName() + ":ALARM_ID_PARAMETER";
 
     private Integer alarmID;
-    private TimePicker timePicker;
 
-    protected TextView input_time;
+    private String name;
+    private int choosenHour;
+    private int choosenMinute;
+    private int dayMask;
+
+    private boolean vibrate = false;
+    private Uri chosenRingtone;
+
+    private int countImage = 5;
+
     protected TextView input_name;
+    protected TextView input_time;
     protected TextView input_day;
-    protected Switch switchVibration;
-    protected TextView input_count_img;
-    protected SoundPreferenceFragment soundPreferenceFragment;
 
-    protected ArrayList seletedItems=new ArrayList();
+    protected Switch switchVibration;
+    protected TextView input_signal;
+
+    protected TextView input_count_img;
+
+    protected ArrayList<Integer> seletedItems=new ArrayList<>();
 
     final CharSequence[] fullDate = {
             " Понедельник",
@@ -77,43 +92,58 @@ public class AlarmSetup extends AppCompatActivity {
         setContentView(R.layout.activity_alarm_setup);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        //timePicker = (TimePicker) findViewById(R.id.timePicker);
+        initViews();
 
-//        GregorianCalendar now = new GregorianCalendar();
-//        timePicker.setCurrentHour(now.get(Calendar.HOUR_OF_DAY));
-//        timePicker.setCurrentMinute(now.get(Calendar.MINUTE));
-//
-//        Intent callerIntent = getIntent();
-//        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
-//            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
-//            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
-//            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
-//            if (alarm != null) {
-//                timePicker.setCurrentHour((int) alarm.getHour());
-//                timePicker.setCurrentMinute((int) alarm.getMinute());
-//            } else {
-//                alarmID = null;
-//            }
-//        }
+        String presetName = null;
+        GregorianCalendar now = new GregorianCalendar();
+        int presetHour = now.get(Calendar.HOUR_OF_DAY);
+        int presetMinute = now.get(Calendar.MINUTE);
+        int presetDayMask = 0;
+        boolean presetVibrate = false;
+        Uri presetRingtone = null;
+        int presetCountImage = 5;
 
-        input_time = (TextView)findViewById(R.id.input_time);
+        Intent callerIntent = getIntent();
+        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
+            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
+            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
+            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
+            if (alarm != null) {
+                presetHour = alarm.getHour();
+                presetMinute = alarm.getMinute();
+                presetVibrate = alarm.isVibration();
+                presetName = alarm.getName();
+                presetDayMask = alarm.getDayMask();
+                presetRingtone = alarm.getRingtone();
+                presetCountImage = alarm.getCountPhoto();
+            } else {
+                alarmID = null;
+            }
+        }
+
+        setName(presetName);
+        setChoosenHourMinute(presetHour, presetMinute);
+        setDayMask(presetDayMask);
+        setVibrate(presetVibrate);
+        setChosenRingtone(presetRingtone);
+        setCountImage(presetCountImage);
+    }
+
+    private void initViews() {
         input_name = (TextView)findViewById(R.id.input_name);
+        input_time = (TextView)findViewById(R.id.input_time);
         input_day = (TextView)findViewById(R.id.input_day);
-        input_count_img = (TextView)findViewById(R.id.count_img);
-        soundPreferenceFragment = (SoundPreferenceFragment) getFragmentManager().findFragmentById(R.id.alarm_preference);
 
         switchVibration = (Switch) findViewById(R.id.switch1);
+        input_signal = (TextView) findViewById(R.id.input_signal);
+
+        input_count_img = (TextView)findViewById(R.id.count_img);
+
         switchVibration.setChecked(false);
         switchVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    switchVibration.setText("Включена");
-                } else {
-//                    Toast.makeText(getApplicationContext(), "SET OFF", Toast.LENGTH_SHORT).show();
-                    switchVibration.setText("Выключена");
-                }
+                setVibrate(isChecked);
             }
         });
     }
@@ -130,7 +160,7 @@ public class AlarmSetup extends AppCompatActivity {
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hour, int minute) {
-            input_time.setText(hour + ":" + minute);
+            setChoosenHourMinute(hour, minute);
         }
     };
 
@@ -138,41 +168,30 @@ public class AlarmSetup extends AppCompatActivity {
         opentDialogDay();
     }
 
+    private int bufDayMask;
     private void opentDialogDay() {
-        boolean check[] = {false, false, false, false, false, false, false};
-        for(int i = 0; i < seletedItems.size(); ++i){
-            check[(int)seletedItems.get(i)] = true;
+        boolean[] check = new boolean[7];
+        for (int i = 0; i < 7; i++) {
+            check[i] = ((dayMask & (1 << i)) != 0);
         }
+        bufDayMask = dayMask;
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Выберете дни, в которые будет повторяться будильник.")
-                .setMultiChoiceItems(fullDate, check, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
-                        if (isChecked) {
-                            seletedItems.add(indexSelected);
-                        } else if (seletedItems.contains(indexSelected)) {
-                            seletedItems.remove(Integer.valueOf(indexSelected));
-                        }
+            .setTitle("Выберете дни, в которые будет повторяться будильник.")
+            .setMultiChoiceItems(fullDate, check, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
+                    if (isChecked) {
+                        bufDayMask = bufDayMask | (1 << indexSelected);
+                    } else {
+                        bufDayMask = bufDayMask & ~(1 << indexSelected);
                     }
-                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Collections.sort(seletedItems);
-                        String result = "";
-                        for(int i = 0; i < seletedItems.size(); ++i){
-                            result += shortDate[(int)seletedItems.get(i)];
-                        }
-                        if(result.equals(new String(""))){
-                            result = "Никогда";
-                        }
-                        input_day.setText(result);
-                    }
-                }).setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                }).create();
+                }
+            }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    setDayMask(bufDayMask);
+                }
+            }).setNegativeButton("Отмена", null).create();
         dialog.show();
     }
 
@@ -181,27 +200,16 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     protected void openDialogName(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Введите название будильника");
-        //alert.setMessage("");
-
         final EditText input = new EditText(this);
-        input.setText(input_name.getText());
-        alert.setView(input);
+        input.setText(name);
 
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this)
+        .setTitle("Введите название будильника")
+        .setView(input).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String srt = input.getEditableText().toString();
-                input_name.setText(srt);
+                setName(input.getEditableText().toString());
             }
-        });
-        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alertDialog = alert.create();
-        alertDialog.show();
+        }).setNegativeButton("Отмена", null).create().show();
     }
 
     public void onClickCountImg(View v){
@@ -209,62 +217,70 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     public void openDialogCountImg(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Выберете количество всего фотографий");
         final NumberPicker input = new NumberPicker(this);
         input.setMaxValue(10);
         input.setMinValue(1);
-        input.setValue(Integer.parseInt(input_count_img.getText().toString()));
+        input.setValue(countImage);
         input.setWrapSelectorWheel(false);
         input.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-        alert.setView(input);
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this)
+        .setTitle("Выберете количество всего фотографий")
+        .setView(input)
+        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                input_count_img.setText(""+input.getValue());
+                setCountImage(input.getValue());
             }
-        });
-        alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alertDialog = alert.create();
-        alertDialog.show();
+        })
+                .setNegativeButton("Отмена", null).create().show();
     }
 
+    public void onClickSignal(View v) {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Выберите сигнал");
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, chosenRingtone);
+        this.startActivityForResult(intent, 5);
+    }
 
-
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
-            if (alarmID == null) {
-                MenuItem item = menu.findItem(R.id.deleteAction);
-                item.setVisible(false);
-            }
-            return true;
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent)
+    {
+        if (resultCode == Activity.RESULT_OK && requestCode == 5) {
+            Uri uri = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            setChosenRingtone(uri);
         }
+    }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.saveAction:
-                    saveAlarm();
-                    NavUtils.navigateUpFromSameTask(this);
-                    return true;
-                case R.id.deleteAction:
-                    deleteAlarm();
-                    NavUtils.navigateUpFromSameTask(this);
-                    return true;
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_alarm_edit, menu);
+        if (alarmID == null) {
+            MenuItem item = menu.findItem(R.id.deleteAction);
+            item.setVisible(false);
         }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.saveAction:
+                saveAlarm();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.deleteAction:
+                deleteAlarm();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     protected void saveAlarm() {
-        int hour = timePicker.getCurrentHour();
-        int minute = timePicker.getCurrentMinute();
+        int hour = choosenHour;
+        int minute = choosenMinute;
 
         AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
         Alarm alarmToSave = null;
@@ -272,19 +288,73 @@ public class AlarmSetup extends AppCompatActivity {
             alarmToSave = alarmTableHelper.getAlarm(alarmID);
         if (alarmToSave == null) {
             alarmToSave = new Alarm();
-            alarmToSave.setHour((short) hour);
-            alarmToSave.setMinute((short) minute);
             alarmToSave.setEnabled(true);
-            alarmTableHelper.saveAlarm(alarmToSave);
-        } else {
-            alarmToSave.setHour((short) hour);
-            alarmToSave.setMinute((short) minute);
+        }
+        alarmToSave.setHour((short) hour);
+        alarmToSave.setMinute((short) minute);
+
+        if (alarmToSave.getId() != null) {
             alarmTableHelper.updateAlarm(alarmToSave);
+        } else {
+            alarmTableHelper.saveAlarm(alarmToSave);
         }
     }
 
     protected void deleteAlarm() {
         AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
         alarmTableHelper.deleteAlarm(alarmID);
+    }
+
+    public void setChoosenHourMinute(int choosenHour, int choosenMinute) {
+        this.choosenHour = choosenHour;
+        this.choosenMinute = choosenMinute;
+
+        input_time.setText(String.format("%d:%2d", choosenHour, choosenMinute));
+    }
+
+    public void setDayMask(int dayMask) {
+        this.dayMask = dayMask;
+        seletedItems.clear();
+        for (int i = 0; i < 7; i++) {
+            if ((dayMask & (1 << i)) != 0) {
+                seletedItems.add(i);
+            }
+        }
+
+        Collections.sort(seletedItems);
+        StringBuilder resultBuilder = new StringBuilder();
+        for(int i = 0; i < seletedItems.size(); ++i){
+            resultBuilder.append(shortDate[(int) seletedItems.get(i)]);
+        }
+        String result = resultBuilder.toString();
+        if (result.isEmpty()) {
+            result = "Никогда";
+        }
+        input_day.setText(result);
+    }
+
+    public void setVibrate(boolean vibrate) {
+        this.vibrate = vibrate;
+        switchVibration.setText(vibrate ? "Включена" : "Выключена");
+    }
+
+    public void setChosenRingtone(Uri chosenRingtone) {
+        this.chosenRingtone = chosenRingtone;
+        String title = "Signal";
+        if (chosenRingtone != null) {
+            Ringtone ringtone = RingtoneManager.getRingtone(this, chosenRingtone);
+            title = ringtone.getTitle(this);
+        }
+        input_signal.setText(title);
+    }
+
+    public void setCountImage(int countImage) {
+        this.countImage = countImage;
+        input_count_img.setText(String.valueOf(countImage));
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        input_name.setText(name);
     }
 }

@@ -28,8 +28,6 @@ public class ImageFile {
     private boolean friendly = false;
     private boolean shown = false;
 
-    private String photoURL;
-
     public static final String FOLDER_NAME = "images";
 
     public ImageFile() {}
@@ -57,23 +55,6 @@ public class ImageFile {
         if (!folder.exists())
             folder.mkdir();
         return folder;
-    }
-
-    @Nullable
-    public static ImageFile fromJSONObject(JSONObject imageObject) throws JSONException {
-        String type = imageObject.getString("type");
-
-        ImageFile imageFile = null;
-        if (type.equals("image")) {
-            String imageMediaID = imageObject.getString("id");
-            String imageLink    = imageObject.getJSONObject("images").getJSONObject("standard_resolution").getString("url");
-
-            imageFile = new ImageFile();
-            imageFile.setMediaId(imageMediaID);
-            imageFile.setPhotoURL(imageLink);
-        }
-
-        return imageFile;
     }
 
     public void deleteFile(Context context) {
@@ -136,13 +117,5 @@ public class ImageFile {
 
     public void setShown(boolean shown) {
         this.shown = shown;
-    }
-
-    public String getPhotoURL() {
-        return photoURL;
-    }
-
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
     }
 }
