@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -17,7 +17,6 @@
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
         <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
@@ -26,4 +25,43 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+
+    <!-- Стили экрана создания будильника -->
+
+    <style name="TitleGeneralSettingsFirst">
+        <item name="android:text">@string/title_general_settings</item>
+        <item name="android:textColor">@color/blue_500</item>
+    </style>
+    <style name="TitleGeneralSettings">
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+    <style name="LineView">
+        <item name="android:background">@color/grey_500</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <!--<item name="android:layout_marginBottom">5dp</item>-->
+    </style>
+
+    <style name="Title">
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:color">@color/grey_500</item>
+    </style>
+
+    <style name="Input">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:color">@color/grey_500</item>
+        <item name="android:textColor">@color/grey_500</item>
+    </style>
+
+    <!-- Cтили экрана списка будильников -->
+
+    <style name="AddButton">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">bottom|center</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="BigTextClock">
+        <item name="android:textColor">@color/blue_500</item>
+    </style>
 </resources>

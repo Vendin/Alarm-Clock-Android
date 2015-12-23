@@ -33,7 +33,9 @@ public class AlarmRegistrator {
                     alarm.getMinute() >= current_minute) {
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
                 calendar.set(Calendar.MINUTE, alarm.getMinute());
+                calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
+                intent.putExtra(RingADingDingReceiver.EXTRA_ID, alarm.getId());
 
                 PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarm.getId(),
                         intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -41,5 +43,16 @@ public class AlarmRegistrator {
                         AlarmManager.INTERVAL_DAY, alarmIntent);
             }
         }
+    }
+
+    public static void unregisterAlarm(Context context, int alarmId) {
+        Intent intent = new Intent(context, RingADingDingReceiver.class);
+        intent.setAction(RingADingDingReceiver.RING_A_DING_DING);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 }

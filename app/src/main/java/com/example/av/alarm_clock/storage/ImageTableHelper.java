@@ -10,6 +10,8 @@ import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageContract;
 import com.example.av.alarm_clock.storage.ImageContract.ImageEntry;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,13 +90,29 @@ public class ImageTableHelper {
                 null,
                 null,
                 null,
-                null//,
-                //String.valueOf(offset) + "," + String.valueOf(limitation)
+                null,
+                String.valueOf(limitation)//String.valueOf(offset) + "," + String.valueOf(limitation)
         );
     }
 
     public ArrayList<ImageFile> getImageFiles(boolean friendly, int limitation, int offset) {
         return getImageFiles(friendly, limitation, offset, false);
+    }
+
+    @Nullable
+    public ImageFile getImageFile(String mediaId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String whereClause = ImageEntry.COLUMN_NAME_MEDIA_ID + " = ?";
+        String[] whereArgs = { mediaId };
+        Cursor cursor = db.query(ImageEntry.TABLE_NAME, IMAGE_PROJECTION, whereClause,
+                whereArgs, null, null, null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            return new ImageFile(cursor);
+        } else {
+            return null;
+        }
     }
 
     public ArrayList<ImageFile> getImageFiles(boolean friendly, int limitation, int offset, boolean shown) {
