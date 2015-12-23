@@ -53,5 +53,12 @@
         <item name="android:textColor">@color/grey_500</item>
     </style>
 
+    <!-- Cтили экрана списка будильников -->
+
+    <style name="AddButton">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">bottom|center</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
 
 </resources>
