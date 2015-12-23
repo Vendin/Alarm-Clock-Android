@@ -4,6 +4,8 @@
 
     <color name="blue_500">#2196F3</color>
     <color name="grey_500">#9E9E9E</color>
+    <color name="pink_500">#E91E63</color>
+
 
     <color name="ok">#1B5E20</color>
     <color name="not_ok">#B71C1C</color>
