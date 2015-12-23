@@ -279,8 +279,6 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     protected void saveAlarm() {
-        int hour = choosenHour;
-        int minute = choosenMinute;
 
         AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
         Alarm alarmToSave = null;
@@ -290,8 +288,14 @@ public class AlarmSetup extends AppCompatActivity {
             alarmToSave = new Alarm();
             alarmToSave.setEnabled(true);
         }
-        alarmToSave.setHour((short) hour);
-        alarmToSave.setMinute((short) minute);
+
+        alarmToSave.setHour((short) choosenHour);
+        alarmToSave.setMinute((short) choosenMinute);
+        alarmToSave.setVibration(vibrate);
+        alarmToSave.setRingtone(chosenRingtone);
+        alarmToSave.setName(name);
+        alarmToSave.setCountPhoto(countImage);
+        alarmToSave.setDayMask(dayMask);
 
         if (alarmToSave.getId() != null) {
             alarmTableHelper.updateAlarm(alarmToSave);
