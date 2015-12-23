@@ -75,20 +75,10 @@ public class AlarmList extends AppCompatActivity {
                     // Обработка клика
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
-
-                        }
-                        if (drawerItem instanceof Badgeable) {
-                            Badgeable badgeable = (Badgeable) drawerItem;
-                            if (badgeable.getBadge() != null) {
-                                // учтите, не делайте так, если ваш бейдж содержит символ "+"
-                                try {
-                                    int badge = Integer.valueOf(badgeable.getBadge());
-                                    if (badge > 0) {
-                                        //drawerResult.updateBadge(String.valueOf(badge - 1), position);
-                                    }
-                                } catch (Exception e) {
-
-                                }
+                            int nameRes = ((Nameable) drawerItem).getNameRes();
+                            if (nameRes == R.string.drawer_item_settings) {
+                                Intent intent = new Intent(AlarmList.this, AlarmSettings.class);
+                                startActivity(intent);
                             }
                         }
                     }
