@@ -33,6 +33,7 @@ public class AlarmRegistrator {
                     alarm.getMinute() >= current_minute) {
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
                 calendar.set(Calendar.MINUTE, alarm.getMinute());
+                calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
                 intent.putExtra(RingADingDingReceiver.EXTRA_ID, alarm.getId());
 

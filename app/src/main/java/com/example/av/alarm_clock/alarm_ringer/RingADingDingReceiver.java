@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.models.Alarm;
@@ -32,7 +33,7 @@ public class RingADingDingReceiver extends BroadcastReceiver {
         } else if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ||
                   action.equals(DAILY_DOWNLOAD)) {
             tryToUpload(context, intent);
-        } else if (action.equals("android.intent.action.BOOT_COMPLETED") ||
+        } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) ||
                 action.equals("android.intent.action.QUICKBOOT_POWERON")) {
             makeDailySetup(context, intent);
         } else {
@@ -42,8 +43,8 @@ public class RingADingDingReceiver extends BroadcastReceiver {
 
     protected void ring(Context context, Intent intent) {
         Intent startRingingIntent = new Intent(context, RiseAndShineMrFreemanActivity.class);
-        int alarmId = startRingingIntent.getIntExtra(EXTRA_ID, 0);
 
+        int alarmId = intent.getIntExtra(EXTRA_ID, 0);
         AlarmTableHelper alarmTableHelper = new AlarmTableHelper(context);
         Alarm alarm = alarmTableHelper.getAlarm(alarmId);
 
