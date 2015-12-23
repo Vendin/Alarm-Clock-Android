@@ -143,8 +143,6 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-
     }
 
     private void initViews() {
