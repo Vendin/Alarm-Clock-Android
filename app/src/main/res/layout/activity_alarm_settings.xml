@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:text="Количество фотографий:">
+            android:text="Количество фотографий:"
+            android:textColor="#000">
         </TextView>
         <Spinner
             android:id="@+id/entry_phcount"
@@ -36,7 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/entry_phcount"
-            android:text="Процент угадывания:">
+            android:text="Процент угадывания:"
+            android:textColor="#000">
         </TextView>
         <SeekBar
             android:id="@+id/entry_percentage"
