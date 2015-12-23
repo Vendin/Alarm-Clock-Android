@@ -44,6 +44,7 @@ public class AlarmSettings extends AppCompatActivity implements SeekBar.OnSeekBa
 
     @Override
     public void onStart() {
+        super.onStart();
         seekBar = (SeekBar)findViewById(R.id.entry_percentage);
         seekBar.setOnSeekBarChangeListener(this);
     }
