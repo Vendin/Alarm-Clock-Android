@@ -2,6 +2,7 @@ package com.example.av.alarm_clock.alarm_main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -44,6 +45,9 @@ public class AlarmList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), MODE_PRIVATE);
+        String username = sharedPreferences.getString("full_name", "username");
+
         Drawer.Result drawerResult = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
@@ -55,7 +59,7 @@ public class AlarmList extends AppCompatActivity {
                         new PrimaryDrawerItem().withName(R.string.drawer_item_custom).withIcon(FontAwesome.Icon.faw_eye).withBadge("6").withIdentifier(2),
                         new SectionDrawerItem().withName(R.string.drawer_item_settings),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_help).withIcon(FontAwesome.Icon.faw_cog),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_open_source).withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
+                        new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1)
                 )
