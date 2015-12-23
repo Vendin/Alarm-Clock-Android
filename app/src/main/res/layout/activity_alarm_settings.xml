@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.av.alarm_clock.alarm_main.AlarmSettings">
+
+    <TextView
+            android:id="@+id/label_phcount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Количество фотографий:">
+        </TextView>
+        <Spinner
+            android:id="@+id/entry_phcount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/label_phcount"
+            android:entries="@array/ringers"
+            android:background="@android:drawable/editbox_background">
+        </Spinner>
+        <TextView
+            android:id="@+id/label_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/entry_phcount"
+            android:text="Процент угадывания:">
+        </TextView>
+        <SeekBar
+            android:id="@+id/entry_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/label_percentage"
+            android:background="@android:drawable/editbox_background"
+            android:max="100">
+        </SeekBar>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/entry_percentage"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/button1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text=""
+                android:layout_weight="2">
+            </TextView>
+            <Button
+                android:id="@+id/button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить"
+                android:layout_weight="3">
+            </Button>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/button3"
+                android:text=""
+                android:layout_weight="2">
+            </TextView>
+        </LinearLayout>
+
+</RelativeLayout>
