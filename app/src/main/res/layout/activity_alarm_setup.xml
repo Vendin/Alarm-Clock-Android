@@ -10,7 +10,17 @@
     tools:context="com.example.av.alarm_clock.alarm_main.AlarmSetup"
     android:id="@+id/l">
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        tools:visibility="gone"
+        android:id="@+id/progressBar" />
+
     <ScrollView
+        tools:visibility="visible"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"

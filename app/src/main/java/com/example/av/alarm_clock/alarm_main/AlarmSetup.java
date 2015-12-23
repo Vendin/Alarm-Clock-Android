@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.app.LoaderManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -24,11 +26,15 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.av.alarm_clock.loaders.AlarmLoader;
+import com.example.av.alarm_clock.loaders.ImageLoader;
 import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
@@ -40,7 +46,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 
-public class AlarmSetup extends AppCompatActivity {
+public class AlarmSetup extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Alarm> {
     public static final String ALARM_ID_PARAMETER = AlarmSetup.class.getCanonicalName() + ":ALARM_ID_PARAMETER";
 
     private Integer alarmID;
@@ -54,6 +60,9 @@ public class AlarmSetup extends AppCompatActivity {
     private Uri chosenRingtone;
 
     private int countImage = 5;
+
+    protected ProgressBar progressBar;
+    protected ScrollView scrollView;
 
     protected TextView input_name;
     protected TextView input_time;
@@ -103,33 +112,29 @@ public class AlarmSetup extends AppCompatActivity {
         Uri presetRingtone = null;
         int presetCountImage = 5;
 
-        Intent callerIntent = getIntent();
-        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
-            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
-            AlarmTableHelper alarmTableHelper = new AlarmTableHelper(this);
-            Alarm alarm = alarmTableHelper.getAlarm(alarmID);
-            if (alarm != null) {
-                presetHour = alarm.getHour();
-                presetMinute = alarm.getMinute();
-                presetVibrate = alarm.isVibration();
-                presetName = alarm.getName();
-                presetDayMask = alarm.getDayMask();
-                presetRingtone = alarm.getRingtone();
-                presetCountImage = alarm.getCountPhoto();
-            } else {
-                alarmID = null;
-            }
-        }
-
         setName(presetName);
         setChoosenHourMinute(presetHour, presetMinute);
         setDayMask(presetDayMask);
         setVibrate(presetVibrate);
         setChosenRingtone(presetRingtone);
         setCountImage(presetCountImage);
+
+        Intent callerIntent = getIntent();
+        if (callerIntent.hasExtra(ALARM_ID_PARAMETER)) {
+            alarmID = callerIntent.getIntExtra(ALARM_ID_PARAMETER, 0);
+            Bundle bundle = new Bundle();
+            bundle.putInt(ALARM_ID_PARAMETER, alarmID);
+            getLoaderManager().initLoader(0, bundle, this);
+        } else {
+            scrollView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void initViews() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+
         input_name = (TextView)findViewById(R.id.input_name);
         input_time = (TextView)findViewById(R.id.input_time);
         input_day = (TextView)findViewById(R.id.input_day);
@@ -153,7 +158,8 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     protected void openDialogTime(){
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, myCallBack, 00, 00, true);
+        TimePickerDialog timePickerDialog =
+                new TimePickerDialog(this, myCallBack, choosenHour, choosenMinute, true);
         timePickerDialog.setTitle("Введите время");
         timePickerDialog.show();
     }
@@ -360,5 +366,32 @@ public class AlarmSetup extends AppCompatActivity {
     public void setName(String name) {
         this.name = name;
         input_name.setText(name);
+    }
+
+    @Override
+    public Loader<Alarm> onCreateLoader(int id, Bundle args) {
+        return new AlarmLoader(this, args.getInt(ALARM_ID_PARAMETER));
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Alarm> loader, Alarm data){
+        if (data != null) {
+            setChoosenHourMinute(data.getHour(), data.getMinute());
+            setVibrate(data.isVibration());
+            setName(data.getName());
+            setDayMask(data.getDayMask());
+            setChosenRingtone(data.getRingtone());
+            setCountImage(data.getCountPhoto());
+        } else {
+            alarmID = null;
+            invalidateOptionsMenu();
+        }
+        scrollView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Alarm> loader) {
+        // TODO: something...
     }
 }
