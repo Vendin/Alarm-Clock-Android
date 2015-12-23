@@ -61,4 +61,7 @@
         <item name="android:layout_marginBottom">10dp</item>
     </style>
 
+    <style name="BigTextClock">
+        <item name="android:textColor">@color/blue_500</item>
+    </style>
 </resources>

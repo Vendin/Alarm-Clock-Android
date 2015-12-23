@@ -28,6 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-    style="@style/AddButton"/>
+        style="@style/AddButton"
+        app:backgroundTint="@color/blue_500"
+        app:backgroundTintMode="src_in" />
 
 </android.support.design.widget.CoordinatorLayout>

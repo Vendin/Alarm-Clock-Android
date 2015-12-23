@@ -11,11 +11,13 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.av.alarm_clock.alarm_main.AlarmList"
-    tools:showIn="@layout/activity_alarm_list">
+    tools:showIn="@layout/activity_alarm_list"
+    android:weightSum="1">
+
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="275dp"
         android:id="@+id/alarmListView" />
 
 </LinearLayout>
