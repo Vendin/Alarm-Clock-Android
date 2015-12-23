@@ -18,14 +18,20 @@ import java.util.List;
  * Created by Михаил on 20.12.2015.
  */
 public class ImageLoader extends AsyncTaskLoader<List<ImagePuzzle>> {
-    private static final int NEED_FRIEND = 3;
-    private static final int NEED_OTHERS = 3;
-    private static final int NEED_TOTAL  = NEED_FRIEND + NEED_OTHERS;
+    public static final String TOTAL_PICTURES =
+            ImageLoader.class.getCanonicalName() + ".TOTAL_PICTURES";
+    private static final int DEFAULT_TOTAL = 6;
 
-    List<ImagePuzzle> mPuzzles;
+    private List<ImagePuzzle> mPuzzles;
+    private int pictureNumber;
 
-    public ImageLoader(@NotNull Context context) {
+    public ImageLoader(@NotNull Context context, Integer pictureNumber) {
         super(context);
+        if (pictureNumber != null && pictureNumber >= 0 && pictureNumber <= 10) {
+            this.pictureNumber = pictureNumber;
+        } else {
+            this.pictureNumber = DEFAULT_TOTAL;
+        }
     }
 
     @Override
@@ -33,10 +39,12 @@ public class ImageLoader extends AsyncTaskLoader<List<ImagePuzzle>> {
         ImageTableHelper imageTableHelper = new ImageTableHelper(getContext());
         List<ImagePuzzle> puzzles = new ArrayList<>();
 
-        List<ImageFile> unshownFrs = imageTableHelper.getImageFiles(true, NEED_FRIEND, 0);
-        List<ImageFile> unshownOts = imageTableHelper.getImageFiles(false, NEED_OTHERS, 0);
+        int needOthers = pictureNumber / 2;
+        int needFriend = pictureNumber - needOthers;
+        List<ImageFile> unshownFrs = imageTableHelper.getImageFiles(true, needFriend, 0);
+        List<ImageFile> unshownOts = imageTableHelper.getImageFiles(false, needOthers, 0);
 
-        int necessaryAdditional = NEED_TOTAL - unshownFrs.size() - unshownOts.size();
+        int necessaryAdditional = pictureNumber - unshownFrs.size() - unshownOts.size();
         List<ImageFile> shownFrs = imageTableHelper.getImageFiles(true, necessaryAdditional,
                 0, true);
         necessaryAdditional = necessaryAdditional - shownFrs.size();

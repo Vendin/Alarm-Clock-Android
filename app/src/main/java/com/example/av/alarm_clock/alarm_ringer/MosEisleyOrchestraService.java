@@ -7,8 +7,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.example.av.alarm_clock.R;
@@ -22,7 +24,15 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
     private final static String STOP_ACTION = MosEisleyOrchestraService.class.getCanonicalName() + "STOP_ACTION";
     private final static int ALARM_NOTIFICATION_ID = 1;
 
+    private final static String RINGTONE_URI =
+            MosEisleyOrchestraService.class.getCanonicalName() + ".RINGTONE_URI";
+    private final static String VIBRATE =
+            MosEisleyOrchestraService.class.getCanonicalName() + ".VIBRATE";
+
+    private Uri ringtoneUri;
+    private boolean vibrate;
     private MediaPlayer mediaPlayer;
+    private Vibrator vibrator;
 
     @Override
     public void onCreate() {
@@ -48,13 +58,19 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setVolume(1.0f, 1.0f);
         try {
-            mediaPlayer.setDataSource(this,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+            if (ringtoneUri == null)
+                ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            mediaPlayer.setDataSource(this, ringtoneUri);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (vibrate) {
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            vibrator.vibrate(5*60*1000); // Vibrate 5 minutes MAX
         }
     }
 
@@ -68,6 +84,14 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
         if (intent.getAction() != null && intent.getAction().equals(STOP_ACTION)) {
             stopSelf();
         }
+        if (intent.hasExtra(RINGTONE_URI)) {
+            String uri = intent.getStringExtra(RINGTONE_URI);
+            if (uri != null) {
+                ringtoneUri = Uri.parse(uri);
+            }
+        }
+        vibrate = intent.getBooleanExtra(VIBRATE, false);
+
         return START_STICKY;
     }
 
@@ -76,6 +100,10 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
         mediaPlayer.stop();
         mediaPlayer.release();
         mediaPlayer = null;
+        if (vibrator != null) {
+            vibrator.cancel();
+            vibrator = null;
+        }
         super.onDestroy();
     }
 

@@ -28,7 +28,9 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.loaders.AlarmLoader;
 import com.example.av.alarm_clock.loaders.ImageLoader;
+import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
 
@@ -37,8 +39,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RiseAndShineMrFreemanActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<ImagePuzzle>>, ImagePuzzle.OnGuessListener {
+public class RiseAndShineMrFreemanActivity
+        extends AppCompatActivity
+        implements ImagePuzzle.OnGuessListener {
+    public static final String EXTRA_ALARM_ID =
+            RiseAndShineMrFreemanActivity.class.getCanonicalName() + ".EXTRA_ALARM_ID";
+
     public static final String GUESSES = "guesses";
     public static final String IMAGES_ARRAY = "imagesArray";
 
@@ -54,7 +60,11 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
     private int clicks   = 0;
     private int total    = 0;
     private int attempts = 0;
+
+    private static final int PUZZLE_LOADER_ID = 0;
+    private static final int ALARM_LOADER_ID = 1;
     private List<ImagePuzzle> puzzles;
+    private Alarm alarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +95,9 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
         imagesList.setLayoutManager(new LinearLayoutManager(this));
         imagesList.addItemDecoration(new PuzzleDecoration());
 
-        getLoaderManager().initLoader(0, null, this);
-        startRinging();
+        Bundle alarmArgs = new Bundle();
+        alarmArgs.putInt(EXTRA_ALARM_ID, getIntent().getIntExtra(EXTRA_ALARM_ID, 0));
+        getLoaderManager().initLoader(ALARM_LOADER_ID, alarmArgs, alarmLoaderListener);
     }
 
     @Override
@@ -141,7 +152,7 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
                     puzzles = null;
                     guesses = 0;
                     clicks = 0;
-                    getLoaderManager().initLoader(0, null, this).forceLoad();
+                    getLoaderManager().initLoader(0, null, imagePuzzleLoaderListener).forceLoad();
                 }
             }
         }
@@ -151,31 +162,55 @@ public class RiseAndShineMrFreemanActivity extends AppCompatActivity
         fullscreenContentControls.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public Loader<List<ImagePuzzle>> onCreateLoader(int id, Bundle args) {
-        return new ImageLoader(this);
-    }
+    LoaderManager.LoaderCallbacks<List<ImagePuzzle>> imagePuzzleLoaderListener =
+            new LoaderManager.LoaderCallbacks<List<ImagePuzzle>>() {
+                public Loader<List<ImagePuzzle>> onCreateLoader ( int id, Bundle args){
+                    return new ImageLoader(RiseAndShineMrFreemanActivity.this,
+                            args.getInt(ImageLoader.TOTAL_PICTURES));
+                }
 
-    @Override
-    public void onLoadFinished(Loader<List<ImagePuzzle>> loader, List<ImagePuzzle> data) {
-        puzzles = data;
+                public void onLoadFinished (Loader<List<ImagePuzzle>> loader,
+                                            List<ImagePuzzle> data){
+                    puzzles = data;
 
-        for (ImagePuzzle puzzle : puzzles) {
-            puzzle.setOnGuessListener(this);
-        }
+                    for (ImagePuzzle puzzle : puzzles) {
+                        puzzle.setOnGuessListener(RiseAndShineMrFreemanActivity.this);
+                    }
 
-        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this, puzzles);
-        imagesList.setAdapter(puzzleAdapter);
+                    PuzzleAdapter puzzleAdapter =
+                            new PuzzleAdapter(RiseAndShineMrFreemanActivity.this, puzzles);
+                    imagesList.setAdapter(puzzleAdapter);
 
-        imagesList.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
+                    imagesList.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
 
-        total = puzzles.size();
-        checkFinish();
-    }
+                    total = puzzles.size();
+                    checkFinish();
+                }
 
-    @Override
-    public void onLoaderReset(Loader<List<ImagePuzzle>> loader) {
-        // TODO: something...
-    }
+                public void onLoaderReset(Loader<List<ImagePuzzle>> loader) {
+                // TODO: something...
+                }
+            };
+
+    LoaderManager.LoaderCallbacks<Alarm> alarmLoaderListener =
+            new LoaderManager.LoaderCallbacks<Alarm>() {
+                public Loader<Alarm> onCreateLoader ( int id, Bundle args){
+                    return new AlarmLoader(RiseAndShineMrFreemanActivity.this,
+                            args.getInt(EXTRA_ALARM_ID));
+                }
+
+                public void onLoadFinished (Loader<Alarm> loader, Alarm data){
+                    alarm = data;
+                    startRinging();
+
+                    Bundle imagePuzzleArgs = new Bundle();
+                    imagePuzzleArgs.putInt(ImageLoader.TOTAL_PICTURES, data.getCountPhoto());
+                    getLoaderManager().initLoader(PUZZLE_LOADER_ID, imagePuzzleArgs, imagePuzzleLoaderListener);
+                }
+
+                public void onLoaderReset(Loader<Alarm> loader) {
+                    // TODO: something...
+                }
+            };
 }

@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
 
 import java.util.Calendar;
@@ -19,8 +20,7 @@ public class RingADingDingReceiver extends BroadcastReceiver {
     private static final String prefix = RingADingDingReceiver.class.getCanonicalName();
     public static final String RING_A_DING_DING = prefix + ".RING_A_DING_DING";
     public static final String DAILY_DOWNLOAD = prefix + ".DAILY_DOWNLOAD";
-    // TODO: Add (?) alarm id support
-    // public static final String EXTRA_ID = RING_A_DING_DING + ":ID";
+    public static final String EXTRA_ID = RING_A_DING_DING + ":ID";
 
     public RingADingDingReceiver() {}
 
@@ -42,9 +42,20 @@ public class RingADingDingReceiver extends BroadcastReceiver {
 
     protected void ring(Context context, Intent intent) {
         Intent startRingingIntent = new Intent(context, RiseAndShineMrFreemanActivity.class);
-        startRingingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-            Intent.FLAG_ACTIVITY_NO_HISTORY);
-        context.startActivity(startRingingIntent);
+        int alarmId = startRingingIntent.getIntExtra(EXTRA_ID, 0);
+
+        AlarmTableHelper alarmTableHelper = new AlarmTableHelper(context);
+        Alarm alarm = alarmTableHelper.getAlarm(alarmId);
+
+        int todayDayIndex = (GregorianCalendar.getInstance().get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7;
+
+        if (alarm != null && alarm.isEnabled() &&
+                (alarm.getDayMask() & (1 << todayDayIndex)) != 0) {
+            startRingingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startRingingIntent.putExtra(RiseAndShineMrFreemanActivity.EXTRA_ALARM_ID, alarmId);
+            context.startActivity(startRingingIntent);
+        }
     }
 
     protected void tryToUpload(Context context, Intent intent) {

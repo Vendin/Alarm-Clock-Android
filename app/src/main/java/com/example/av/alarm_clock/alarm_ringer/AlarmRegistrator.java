@@ -34,6 +34,7 @@ public class AlarmRegistrator {
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
                 calendar.set(Calendar.MINUTE, alarm.getMinute());
                 calendar.set(Calendar.MILLISECOND, 0);
+                intent.putExtra(RingADingDingReceiver.EXTRA_ID, alarm.getId());
 
                 PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarm.getId(),
                         intent, PendingIntent.FLAG_CANCEL_CURRENT);
