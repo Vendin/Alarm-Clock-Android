@@ -37,7 +37,8 @@
         <activity
             android:name=".alarm_main.AlarmSetup"
             android:label="Настройки будильника"
-            android:parentActivityName=".alarm_main.AlarmList" />
+            android:parentActivityName=".alarm_main.AlarmList"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <receiver
             android:name=".alarm_ringer.RingADingDingReceiver"
@@ -66,7 +67,8 @@
         
         <activity
             android:name=".alarm_main.AlarmSettings"
-            android:label="@string/title_activity_alarm_settings" >
+            android:label="@string/title_activity_alarm_settings"
+            android:parentActivityName=".alarm_main.AlarmList">
         </activity>
     </application>
 

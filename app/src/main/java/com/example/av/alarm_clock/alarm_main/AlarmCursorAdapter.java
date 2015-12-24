@@ -19,7 +19,7 @@ import com.example.av.alarm_clock.storage.AlarmTableHelper;
  * Created by Михаил on 12.12.2015.
  */
 public class AlarmCursorAdapter extends CursorAdapter {
-    private static final String timeFormat = "%d:%d";
+    private static final String timeFormat = "%d:%02d";
     static final int TAG_ID = R.id.alarmTagId;
     protected Context context;
 
@@ -36,6 +36,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView timeTextView  = (TextView) view.findViewById(R.id.timeTextView);
+        TextView nameTextView = (TextView) view.findViewById(R.id.nameTextView);
         Switch   enabledSwitch = (Switch) view.findViewById(R.id.enabledSwitch);
 
         int id = cursor.getInt(AlarmContract.PROJECTION_ID_INDEX);
@@ -47,6 +48,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
 
         String timeText = String.format(timeFormat, hour, minute);
         timeTextView.setText(timeText);
+        nameTextView.setText(cursor.getString(AlarmContract.PROJECTION_NAME_INDEX));
         enabledSwitch.setChecked(enabled);
 
         enabledSwitch.setOnCheckedChangeListener(switchCheckListenter);

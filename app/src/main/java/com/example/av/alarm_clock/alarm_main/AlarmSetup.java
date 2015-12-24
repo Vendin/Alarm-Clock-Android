@@ -13,13 +13,18 @@ import android.content.Loader;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -34,6 +39,15 @@ import com.example.av.alarm_clock.loaders.ImageLoader;
 import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
+import com.mikepenz.iconics.typeface.FontAwesome;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import org.w3c.dom.Text;
 
@@ -42,7 +56,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 
-public class AlarmSetup extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Alarm> {
+public class AlarmSetup extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Alarm> {
     public static final String ALARM_ID_PARAMETER = AlarmSetup.class.getCanonicalName() + ":ALARM_ID_PARAMETER";
 
     private Integer alarmID;
@@ -125,6 +139,10 @@ public class AlarmSetup extends AppCompatActivity implements LoaderManager.Loade
             scrollView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
         }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initViews() {
