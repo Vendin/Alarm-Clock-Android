@@ -54,7 +54,7 @@ public class AlarmList extends AppCompatActivity {
                 .withActionBarDrawerToggle(true)
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
-                        new SectionDrawerItem().withName("Info"),
+                        new SectionDrawerItem().withName("Информация"),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome.Icon.faw_cog),
                         new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false)
                 )
