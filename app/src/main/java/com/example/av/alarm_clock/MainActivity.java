@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.app_pref_file), Context.MODE_PRIVATE);
 
         final String authToken = sharedPreferences.getString("access_token", "no auth token");
-        Toast toast = Toast.makeText(this, authToken, Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(this, authToken, Toast.LENGTH_SHORT);
+//        toast.show();
 
         if (sharedPreferences.getString("access_token", null) == null) {
             Intent intent = new Intent(this, LoginActivity.class);

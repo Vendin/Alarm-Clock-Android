@@ -68,7 +68,8 @@
         <activity
             android:name=".alarm_main.AlarmSettings"
             android:label="@string/title_activity_alarm_settings"
-            android:parentActivityName=".alarm_main.AlarmList">
+            android:parentActivityName=".alarm_main.AlarmList"
+            >
         </activity>
     </application>
 

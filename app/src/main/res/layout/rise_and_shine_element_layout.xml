@@ -16,7 +16,7 @@
             android:src="@drawable/test_image"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="20dp"/>
 
         <ImageView
             android:id="@+id/result_view"

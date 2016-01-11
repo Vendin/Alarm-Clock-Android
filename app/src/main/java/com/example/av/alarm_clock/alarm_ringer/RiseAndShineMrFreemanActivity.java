@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -50,7 +51,7 @@ public class RiseAndShineMrFreemanActivity
 
     public static final int MAX_ATTEMPT = 3;
 
-    private LinearLayout mContentView;
+    private RelativeLayout mContentView;
     private RecyclerView imagesList;
     private LinearLayout fullscreenContentControls;
     private Button button;
@@ -71,7 +72,7 @@ public class RiseAndShineMrFreemanActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_rise_and_shine_mr_freeman);
-        mContentView = (LinearLayout) findViewById(R.id.fullscreen_content);
+        mContentView = (RelativeLayout) findViewById(R.id.fullscreen_content);
 
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
