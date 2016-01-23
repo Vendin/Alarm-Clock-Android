@@ -189,7 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/title_add_name_alarm_clock"
+                    android:text="@string/title_add_signal_alarm_clock"
                     android:id="@+id/title_signal"
                     android:layout_gravity="left|top"
                     style="@style/Title" />

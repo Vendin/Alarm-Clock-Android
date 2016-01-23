@@ -1,5 +1,6 @@
 package com.example.av.alarm_clock.alarm_main;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,7 @@ public class AlarmSettings extends AppCompatActivity implements SeekBar.OnSeekBa
     private int percentage;
     private int numRingers;
     private SeekBar seekBar;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class AlarmSettings extends AppCompatActivity implements SeekBar.OnSeekBa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), MODE_PRIVATE);
 
         save = (Button) findViewById(R.id.button_save);
         percentageView = (TextView)findViewById(R.id.label_percentage);

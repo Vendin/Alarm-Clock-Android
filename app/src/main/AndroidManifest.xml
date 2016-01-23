@@ -5,7 +5,7 @@
     <!-- To use Instagram API -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -38,7 +38,7 @@
             android:name=".alarm_main.AlarmSetup"
             android:label="Настройки будильника"
             android:parentActivityName=".alarm_main.AlarmList"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
             android:name=".alarm_ringer.RingADingDingReceiver"
@@ -62,14 +62,19 @@
         <service
             android:name=".alarm_ringer.ImageDownloadIntentService"
             android:exported="false" />
-        <service android:name=".alarm_ringer.MosEisleyOrchestraService"
-            android:exported="false"/>
-        
+        <service
+            android:name=".alarm_ringer.MosEisleyOrchestraService"
+            android:exported="false" />
+
         <activity
             android:name=".alarm_main.AlarmSettings"
             android:label="@string/title_activity_alarm_settings"
-            android:parentActivityName=".alarm_main.AlarmList"
-            >
+            android:parentActivityName=".alarm_main.AlarmList" >
+        </activity>
+        <activity
+            android:name=".alarm_main.ActivityMainSettings"
+            android:theme="@style/AppTheme2"
+            android:label="@string/title_activity_activity_main_settings" >
         </activity>
     </application>
 
