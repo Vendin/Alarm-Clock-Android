@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.av.alarm_clock.R;
 
@@ -60,10 +61,12 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
         try {
             if (ringtoneUri == null)
                 ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
             mediaPlayer.setDataSource(this, ringtoneUri);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             mediaPlayer.prepareAsync();
+            mediaPlayer.setLooping(true);
         } catch (IOException e) {
             e.printStackTrace();
         }

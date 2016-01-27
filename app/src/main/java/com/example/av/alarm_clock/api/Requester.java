@@ -161,7 +161,7 @@ public class Requester {
         boolean downloaded = false;
         try {
             final String uri = photo.getPhotoURL();
-            final String extension = uri.substring(uri.lastIndexOf(".") + 1);;
+            final String extension = uri.substring(uri.lastIndexOf(".") + 1);
 
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();

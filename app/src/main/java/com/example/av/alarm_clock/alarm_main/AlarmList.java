@@ -55,7 +55,6 @@ public class AlarmList extends AppCompatActivity {
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
                         new SectionDrawerItem().withName("Информация"),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome.Icon.faw_cog),
                         new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false)
                 )
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
@@ -76,10 +75,6 @@ public class AlarmList extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
                             int nameRes = ((Nameable) drawerItem).getNameRes();
-                            if (nameRes == R.string.drawer_item_settings) {
-                                Intent intent = new Intent(AlarmList.this, AlarmSettings.class);
-                                startActivity(intent);
-                            }
                         }
                     }
                 })
@@ -133,10 +128,6 @@ public class AlarmList extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this, AlarmSettings.class);
-                startActivity(intent);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
