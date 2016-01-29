@@ -67,6 +67,7 @@ public class AlarmList extends AppCompatActivity {
                 .addDrawerItems(
                         new SectionDrawerItem().withName("Информация"),
                         new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false),
+                        new SecondaryDrawerItem().withName("О приложении").setEnabled(true),
                         new SecondaryDrawerItem().withName("Выход").setEnabled(true)
                 )
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
@@ -98,6 +99,9 @@ public class AlarmList extends AppCompatActivity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
+                            } else if (itemName.equals("О приложении")) {
+                                Intent intent = new Intent(AlarmList.this, AboutActivity.class);
+                                startActivity(intent);
                             }
                         }
                     }
@@ -105,7 +109,8 @@ public class AlarmList extends AppCompatActivity {
                 .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
                     @Override
                     // Обработка длинного клика, например, только для SecondaryDrawerItem
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                    public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                                   int position, long id, IDrawerItem drawerItem) {
                         if (drawerItem instanceof SecondaryDrawerItem) {
                         }
                         return false;
