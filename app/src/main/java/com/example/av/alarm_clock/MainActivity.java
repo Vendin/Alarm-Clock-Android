@@ -59,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void finishTask(JSONObject result) {
-        Toast toast = Toast.makeText(this, "Task has finished!", Toast.LENGTH_SHORT);
-        toast.show();
     }
 
     @Override

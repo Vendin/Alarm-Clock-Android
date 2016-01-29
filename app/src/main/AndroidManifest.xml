@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -47,6 +48,7 @@
             <intent-filter>
                 <action android:name="com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver.RING_A_DING_DING" />
                 <action android:name="com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver.DAILY_DOWNLOAD" />
+                <action android:name="com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver.START_DOWNLOAD" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -66,11 +68,6 @@
             android:name=".alarm_ringer.MosEisleyOrchestraService"
             android:exported="false" />
 
-        <activity
-            android:name=".alarm_main.AlarmSettings"
-            android:label="@string/title_activity_alarm_settings"
-            android:parentActivityName=".alarm_main.AlarmList" >
-        </activity>
         <activity
             android:name=".alarm_main.ActivityMainSettings"
             android:theme="@style/AppTheme2"

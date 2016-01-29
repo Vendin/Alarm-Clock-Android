@@ -29,12 +29,12 @@
         android:transitionName="actionBar" />
 
     <TextClock
-        android:layout_width="190dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textClockDate"
         android:layout_gravity="center_horizontal"
-        android:format12Hour="MMM dd, yyyy"
-        android:format24Hour="MMM dd, yyyy"
+        android:format12Hour="dd.MM.yyyy"
+        android:format24Hour="dd.MM.yyyy"
         android:textSize="30sp"
         android:layout_marginTop="20dp"
         style="@style/BigTextClock"/>

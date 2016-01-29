@@ -1,13 +1,16 @@
 package com.example.av.alarm_clock.alarm_main;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,8 +19,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.example.av.alarm_clock.MainActivity;
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.alarm_ringer.ImageDownloadIntentService;
+import com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver;
+import com.example.av.alarm_clock.auth.LoginActivity;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
@@ -28,6 +36,9 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class AlarmList extends AppCompatActivity {
     private ListView alarmListView;
@@ -55,7 +66,8 @@ public class AlarmList extends AppCompatActivity {
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
                         new SectionDrawerItem().withName("Информация"),
-                        new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false)
+                        new SecondaryDrawerItem().withName(username).withIcon(FontAwesome.Icon.faw_user).setEnabled(false),
+                        new SecondaryDrawerItem().withName("Выход").setEnabled(true)
                 )
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
@@ -74,7 +86,19 @@ public class AlarmList extends AppCompatActivity {
                     // Обработка клика
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
-                            int nameRes = ((Nameable) drawerItem).getNameRes();
+                            String itemName = ((Nameable) drawerItem).getName();
+
+                            if (itemName.equals("Выход")) {
+                                SharedPreferences.Editor sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), Context.MODE_PRIVATE).edit();
+                                sharedPreferences.clear();
+                                sharedPreferences.commit();
+
+                                Intent intent = new Intent(AlarmList.this, MainActivity.class);
+                                intent.putExtra("finish", true);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     }
                 })
@@ -97,6 +121,23 @@ public class AlarmList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Calendar calendar = GregorianCalendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_YEAR);
+        Context context = getApplicationContext();
+
+        SharedPreferences preferences = context.getSharedPreferences(
+                context.getString(R.string.app_pref_file), Context.MODE_PRIVATE);
+        int lastUpload = preferences.getInt("last_upload_day", today + 1);
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        boolean connected = info != null && info.isAvailable() && info.isConnected();
+
+        if (lastUpload != today && connected) {
+            ImageDownloadIntentService.startActionUploadImages(context);
+        }
     }
 
     @Override

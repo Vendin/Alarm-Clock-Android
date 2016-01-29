@@ -20,6 +20,7 @@ import java.util.GregorianCalendar;
 public class RingADingDingReceiver extends BroadcastReceiver {
     private static final String prefix = RingADingDingReceiver.class.getCanonicalName();
     public static final String RING_A_DING_DING = prefix + ".RING_A_DING_DING";
+    public static final String START_DOWNLOAD = prefix + ".START_DOWNLOAD";
     public static final String DAILY_DOWNLOAD = prefix + ".DAILY_DOWNLOAD";
     public static final String EXTRA_ID = RING_A_DING_DING + ":ID";
 
@@ -28,13 +29,17 @@ public class RingADingDingReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
+        Log.d("TechMail", "Receiver gor something: "+action);
+
         if (action.equals(RING_A_DING_DING)) {
+            Log.d("TechMail", intent.getIntExtra(EXTRA_ID, 0)+" "+System.currentTimeMillis()+" is going to RING");
             ring(context, intent);
         } else if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ||
                   action.equals(DAILY_DOWNLOAD)) {
             tryToUpload(context, intent);
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED) ||
-                action.equals("android.intent.action.QUICKBOOT_POWERON")) {
+                action.equals("android.intent.action.QUICKBOOT_POWERON") ||
+                action.equals(START_DOWNLOAD)) {
             makeDailySetup(context, intent);
         } else {
             throw new UnsupportedOperationException("Not implemented");
@@ -50,8 +55,8 @@ public class RingADingDingReceiver extends BroadcastReceiver {
 
         int todayDayIndex = (GregorianCalendar.getInstance().get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7;
 
-        if (alarm != null && alarm.isEnabled() &&
-                (alarm.getDayMask() & (1 << todayDayIndex)) != 0) {
+        if ((alarm != null && alarm.getDayMask() == 0) || (alarm != null && alarm.isEnabled() &&
+                (alarm.getDayMask() & (1 << todayDayIndex)) != 0)) {
             startRingingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_NO_HISTORY);
             startRingingIntent.putExtra(RiseAndShineMrFreemanActivity.EXTRA_ALARM_ID, alarmId);

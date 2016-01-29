@@ -3,6 +3,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.av.alarm_clock.models.Alarm;
 
@@ -29,8 +31,8 @@ public class AlarmRegistrator {
         short current_minute = (short) calendar.get(Calendar.MINUTE);
 
         for (Alarm alarm: alarmList) {
-            if (alarm.isEnabled() && alarm.getHour() >= current_hour &&
-                    alarm.getMinute() >= current_minute) {
+            if (alarm.isEnabled()/* && alarm.getHour() >= current_hour &&
+                    alarm.getMinute() >= current_minute*/) {
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
                 calendar.set(Calendar.MINUTE, alarm.getMinute());
                 calendar.set(Calendar.SECOND, 0);
@@ -39,8 +41,14 @@ public class AlarmRegistrator {
 
                 PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarm.getId(),
                         intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                        AlarmManager.INTERVAL_DAY, alarmIntent);
+
+                long timeToRing = calendar.getTimeInMillis();
+
+                if((alarm.getHour() < current_hour) || (alarm.getHour() == current_hour && alarm.getMinute() < current_minute))
+                    timeToRing += 24 * 60 * 60 * 1000;
+
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeToRing, alarmIntent);
+                Log.d("TechMail", System.currentTimeMillis()+" "+calendar.getTimeInMillis()+" "+alarm.getId()+" "+alarm.getHour()+":"+alarm.getMinute()+" has been just setSepeating");
             }
         }
     }

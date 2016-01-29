@@ -93,7 +93,7 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
             " Четверг",
             " Пятница",
             " Суббота",
-            " Воскресение"
+            " Воскресенье"
     };
 
     final CharSequence[] shortDate = {
@@ -175,6 +175,7 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
     protected void openDialogTime(){
         TimePickerDialog timePickerDialog =
                 new TimePickerDialog(this, myCallBack, choosenHour, choosenMinute, true);
+
         timePickerDialog.setTitle("Введите время");
         timePickerDialog.show();
     }
@@ -334,15 +335,17 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
         this.choosenHour = choosenHour;
         this.choosenMinute = choosenMinute;
 
-        input_time.setText(String.format("%d:%2d", choosenHour, choosenMinute));
+        input_time.setText(String.format("%02d:%02d", choosenHour, choosenMinute));
     }
 
     public void setDayMask(int dayMask) {
         this.dayMask = dayMask;
         seletedItems.clear();
-        for (int i = 0; i < 7; i++) {
-            if ((dayMask & (1 << i)) != 0) {
-                seletedItems.add(i);
+        if(dayMask != 0) {
+            for (int i = 0; i < 7; i++) {
+                if ((dayMask & (1 << i)) != 0) {
+                    seletedItems.add(i);
+                }
             }
         }
 
@@ -352,8 +355,8 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
             resultBuilder.append(shortDate[(int) seletedItems.get(i)]);
         }
         String result = resultBuilder.toString();
-        if (result.isEmpty()) {
-            result = "Никогда";
+        if (result.equals("")) {
+            result = "Всегда";
         }
         input_day.setText(result);
     }
