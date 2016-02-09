@@ -99,7 +99,7 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
                     break;
                 case UNGUESSED:
                     stateListDrawable.setState(new int[]{R.attr.unguessed});
-//                    visibility = View.GONE;
+                    visibility = View.GONE;
                     buttonActiveness = true;
                     break;
                 case RECOGNIZED:

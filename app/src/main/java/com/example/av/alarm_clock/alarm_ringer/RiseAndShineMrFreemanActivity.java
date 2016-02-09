@@ -183,7 +183,7 @@ public class RiseAndShineMrFreemanActivity
                     imagesList.setAdapter(puzzleAdapter);
 
                     imagesList.setVisibility(View.VISIBLE);
-//                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
 
                     total = puzzles.size();
                     checkFinish();
