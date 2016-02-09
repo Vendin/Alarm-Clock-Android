@@ -50,11 +50,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent(this, AlarmList.class);
             startActivity(intent);
+            finish();
         }
 
         bus.register(this);
         if (loginTask != null && loginTask.getStatus() == AsyncTask.Status.FINISHED)
             finishTask(null);
+
+
     }
 
     @Subscribe

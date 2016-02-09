@@ -138,7 +138,7 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
             getLoaderManager().initLoader(0, bundle, this);
         } else {
             scrollView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.GONE);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -405,7 +405,7 @@ public class AlarmSetup extends ActionBarActivity implements LoaderManager.Loade
             invalidateOptionsMenu();
         }
         scrollView.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
+    //    progressBar.setVisibility(View.GONE);
     }
 
     @Override

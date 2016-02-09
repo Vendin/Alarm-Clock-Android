@@ -139,7 +139,7 @@ public class AlarmList extends AppCompatActivity {
         NetworkInfo info = connectivityManager.getActiveNetworkInfo();
         boolean connected = info != null && info.isAvailable() && info.isConnected();
 
-        if (lastUpload != today && connected) {
+        if (connected) {
             ImageDownloadIntentService.startActionUploadImages(context);
         }
     }

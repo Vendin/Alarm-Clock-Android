@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(ProgressBar.GONE);
+    //    progressBar.setVisibility(ProgressBar.GONE);
         webView.loadUrl(AUTH_URL);
 
         bus.register(this);
@@ -120,7 +120,7 @@ public class LoginActivity extends Activity {
                         String accessToken = url.split("#access_token=")[1];
                         Context context = LoginActivity.this;
 
-                        webView.setVisibility(View.GONE);
+ //                       webView.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
 
                         Log.d(this.getClass().getCanonicalName(), "TOKEN: " + accessToken);
