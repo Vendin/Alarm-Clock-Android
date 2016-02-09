@@ -94,9 +94,8 @@ public class AlarmList extends AppCompatActivity {
                                 sharedPreferences.clear();
                                 sharedPreferences.commit();
 
-                                Intent intent = new Intent(AlarmList.this, MainActivity.class);
-                                intent.putExtra("finish", true);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
                             } else if (itemName.equals("О приложении")) {
@@ -140,7 +139,7 @@ public class AlarmList extends AppCompatActivity {
         NetworkInfo info = connectivityManager.getActiveNetworkInfo();
         boolean connected = info != null && info.isAvailable() && info.isConnected();
 
-        if (lastUpload != today && connected) {
+        if (connected) {
             ImageDownloadIntentService.startActionUploadImages(context);
         }
     }

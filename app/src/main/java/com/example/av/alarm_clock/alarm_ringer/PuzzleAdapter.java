@@ -87,7 +87,7 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.ViewHolder
             Context context = rowView.getContext();
 
             int color = Color.BLACK;
-            int visibility = View.GONE;
+            int visibility = View.VISIBLE;
             boolean buttonActiveness = true;
 
             switch(puzzleState) {
