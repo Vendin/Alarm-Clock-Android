@@ -57,7 +57,7 @@ public class AlarmList extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), MODE_PRIVATE);
-        String username = sharedPreferences.getString("full_name", "username");
+        String username = sharedPreferences.getString("full_name", "Гость");
 
         Drawer.Result drawerResult = new Drawer()
                 .withActivity(this)

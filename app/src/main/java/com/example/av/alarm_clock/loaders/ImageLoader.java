@@ -2,8 +2,10 @@ package com.example.av.alarm_clock.loaders;
 
 import android.content.Context;
 import android.content.AsyncTaskLoader;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.alarm_ringer.ImagePuzzle;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
@@ -31,6 +33,14 @@ public class ImageLoader extends AsyncTaskLoader<List<ImagePuzzle>> {
             this.pictureNumber = pictureNumber;
         } else {
             this.pictureNumber = DEFAULT_TOTAL;
+        }
+
+        SharedPreferences sharedPreferences = getContext()
+                .getSharedPreferences(getContext().getString(R.string.app_pref_file),
+                        Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("auth_token", null);
+        if (token == null || token.equals(getContext().getResources().getString(R.string.app_is_guest))) {
+            this.pictureNumber = 0;
         }
     }
 

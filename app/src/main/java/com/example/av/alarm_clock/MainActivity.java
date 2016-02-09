@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.av.alarm_clock.alarm_main.AlarmList;
@@ -22,10 +24,41 @@ public class MainActivity extends AppCompatActivity {
     private static final Bus bus = new Bus();
     private static AsyncTask loginTask;
 
+    private Button loginViaInstagram;
+    private Button loginAsGuest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loginViaInstagram = (Button) findViewById(R.id.button_login_Instagram);
+        loginViaInstagram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        loginAsGuest = (Button) findViewById(R.id.button_login_guest);
+        loginAsGuest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String IS_GUEST = getResources().getString(R.string.app_is_guest);
+                SharedPreferences sharedPreferences = getSharedPreferences(
+                        getString(R.string.app_pref_file), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("access_token", IS_GUEST);
+                editor.putString("full_name", "Гость");
+                editor.apply();
+
+                Intent intent = new Intent(MainActivity.this, AlarmList.class);
+                finish();
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -34,22 +67,21 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(
                 getString(R.string.app_pref_file), Context.MODE_PRIVATE);
 
-        final String authToken = sharedPreferences.getString("access_token", "no auth token");
-//        Toast toast = Toast.makeText(this, authToken, Toast.LENGTH_SHORT);
-//        toast.show();
+        final String authToken = sharedPreferences.getString("access_token", null);
+        final String IS_GUEST = getResources().getString(R.string.app_is_guest);
 
-        if (sharedPreferences.getString("access_token", null) == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        } else if (sharedPreferences.getString("full_name", null) == null) {
-            if (loginTask == null) {
-                loginTask = new ConnectInstagramAsyncTask(authToken,
-                        ConnectInstagramAsyncTask.SELF_INFO, this, bus);
-                loginTask.execute((String[]) null);
+        if (authToken != null) {
+            if (!authToken.equals(IS_GUEST) && sharedPreferences.getString("full_name", null) == null) {
+                if (loginTask == null) {
+                    loginTask = new ConnectInstagramAsyncTask(authToken,
+                            ConnectInstagramAsyncTask.SELF_INFO, this, bus);
+                    loginTask.execute((String[]) null);
+                }
+            } else {
+                Intent intent = new Intent(this, AlarmList.class);
+                finish();
+                startActivity(intent);
             }
-        } else {
-            Intent intent = new Intent(this, AlarmList.class);
-            startActivity(intent);
         }
 
         bus.register(this);
@@ -59,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void finishTask(JSONObject result) {
+        loginTask = null;
+        Intent intent = new Intent(this, AlarmList.class);
+        finish();
+        startActivity(intent);
     }
 
     @Override
