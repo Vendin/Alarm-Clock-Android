@@ -71,7 +71,7 @@
         <activity
             android:name=".alarm_main.ActivityMainSettings"
             android:label="@string/title_activity_activity_main_settings"
-            android:theme="@style/AppTheme2" >
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".alarm_main.AboutActivity"

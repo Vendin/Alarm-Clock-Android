@@ -20,6 +20,7 @@
         android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         android:paddingTop="@dimen/tool_bar_top_padding"
+        app:theme="@style/MyToolbar"
         android:transitionName="actionBar" />
 
     <ProgressBar
