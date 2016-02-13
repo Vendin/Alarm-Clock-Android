@@ -25,10 +25,12 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
     private final static String STOP_ACTION = MosEisleyOrchestraService.class.getCanonicalName() + "STOP_ACTION";
     private final static int ALARM_NOTIFICATION_ID = 1;
 
-    private final static String RINGTONE_URI =
+    public final static String RINGTONE_URI =
             MosEisleyOrchestraService.class.getCanonicalName() + ".RINGTONE_URI";
-    private final static String VIBRATE =
+    public final static String VIBRATE =
             MosEisleyOrchestraService.class.getCanonicalName() + ".VIBRATE";
+
+    private boolean intentReceived = false;
 
     private Uri ringtoneUri;
     private boolean vibrate;
@@ -58,23 +60,10 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setVolume(1.0f, 1.0f);
-        try {
-            if (ringtoneUri == null)
-                ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
-            mediaPlayer.setDataSource(this, ringtoneUri);
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setLooping(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (vibrate) {
-            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-            vibrator.vibrate(5*60*1000); // Vibrate 5 minutes MAX
-        }
+        mediaPlayer.setOnPreparedListener(this);
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setLooping(true);
     }
 
     @Override
@@ -87,13 +76,34 @@ public class MosEisleyOrchestraService extends Service implements MediaPlayer.On
         if (intent.getAction() != null && intent.getAction().equals(STOP_ACTION)) {
             stopSelf();
         }
+        String uri = null;
         if (intent.hasExtra(RINGTONE_URI)) {
-            String uri = intent.getStringExtra(RINGTONE_URI);
-            if (uri != null) {
-                ringtoneUri = Uri.parse(uri);
-            }
+            uri = intent.getStringExtra(RINGTONE_URI);
         }
+        if (uri != null) {
+            ringtoneUri = Uri.parse(uri);
+        } else {
+            ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        }
+
+        try {
+            mediaPlayer.setDataSource(this, ringtoneUri);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         vibrate = intent.getBooleanExtra(VIBRATE, false);
+        if (vibrate) {
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            vibrator.vibrate(5*60*1000); // Vibrate 5 minutes MAX
+        }
+
+        if (!mediaPlayer.isPlaying())
+            mediaPlayer.prepareAsync();
 
         return START_STICKY;
     }

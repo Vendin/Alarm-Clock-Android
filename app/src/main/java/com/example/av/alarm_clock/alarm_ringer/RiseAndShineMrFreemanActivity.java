@@ -113,6 +113,8 @@ public class RiseAndShineMrFreemanActivity
 
     public void startRinging() {
         Intent intent = new Intent(this, MosEisleyOrchestraService.class);
+        intent.putExtra(MosEisleyOrchestraService.VIBRATE, alarm.isVibration());
+        intent.putExtra(MosEisleyOrchestraService.RINGTONE_URI, alarm.getRingtoneString());
         startService(intent);
     }
 
