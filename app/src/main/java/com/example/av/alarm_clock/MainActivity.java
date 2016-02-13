@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.av.alarm_clock.alarm_main.AlarmList;
 import com.example.av.alarm_clock.auth.ConnectInstagramAsyncTask;
 import com.example.av.alarm_clock.auth.LoginActivity;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -45,12 +46,11 @@ public class MainActivity extends AppCompatActivity {
         loginAsGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String IS_GUEST = getResources().getString(R.string.app_is_guest);
                 SharedPreferences sharedPreferences = getSharedPreferences(
-                        getString(R.string.app_pref_file), Context.MODE_PRIVATE);
+                        PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("access_token", IS_GUEST);
-                editor.putString("full_name", "Гость");
+                editor.putString(PreferenceConstants.ACCESS_TOKEN, PreferenceConstants.USER_IS_GUEST);
+                editor.putString(PreferenceConstants.FULL_NAME, "Гость");
                 editor.apply();
 
                 Intent intent = new Intent(MainActivity.this, AlarmList.class);
@@ -65,13 +65,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = getSharedPreferences(
-                getString(R.string.app_pref_file), Context.MODE_PRIVATE);
-
-        final String authToken = sharedPreferences.getString("access_token", null);
-        final String IS_GUEST = getResources().getString(R.string.app_is_guest);
+                PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        final String authToken = sharedPreferences.getString(PreferenceConstants.ACCESS_TOKEN, null);
 
         if (authToken != null) {
-            if (!authToken.equals(IS_GUEST) && sharedPreferences.getString("full_name", null) == null) {
+            if (!authToken.equals(PreferenceConstants.USER_IS_GUEST) &&
+                    sharedPreferences.getString(PreferenceConstants.FULL_NAME, null) == null) {
                 if (loginTask == null) {
                     loginTask = new ConnectInstagramAsyncTask(authToken,
                             ConnectInstagramAsyncTask.SELF_INFO, this, bus);

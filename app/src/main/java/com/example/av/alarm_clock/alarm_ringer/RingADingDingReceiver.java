@@ -13,6 +13,7 @@ import android.util.Log;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.models.Alarm;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -69,8 +70,8 @@ public class RingADingDingReceiver extends BroadcastReceiver {
         int today = calendar.get(Calendar.DAY_OF_YEAR);
 
         SharedPreferences preferences = context.getSharedPreferences(
-                context.getString(R.string.app_pref_file), Context.MODE_PRIVATE);
-        int lastUpload = preferences.getInt("last_upload_day", today + 1);
+                PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        int lastUpload = preferences.getInt(PreferenceConstants.LAST_UPLOAD_DAY, today + 1);
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);

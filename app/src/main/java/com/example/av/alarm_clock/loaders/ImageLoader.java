@@ -9,6 +9,7 @@ import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.alarm_ringer.ImagePuzzle;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,10 +37,9 @@ public class ImageLoader extends AsyncTaskLoader<List<ImagePuzzle>> {
         }
 
         SharedPreferences sharedPreferences = getContext()
-                .getSharedPreferences(getContext().getString(R.string.app_pref_file),
-                        Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("auth_token", null);
-        if (token == null || token.equals(getContext().getResources().getString(R.string.app_is_guest))) {
+                .getSharedPreferences(PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString(PreferenceConstants.ACCESS_TOKEN, null);
+        if (token == null || token.equals(PreferenceConstants.USER_IS_GUEST)) {
             this.pictureNumber = 0;
         }
     }

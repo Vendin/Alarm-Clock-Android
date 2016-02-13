@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
@@ -45,10 +46,10 @@ public class Requester {
     public Requester(Context context) {
         this.context = context;
         SharedPreferences sp = context.getSharedPreferences(
-                context.getString(R.string.app_pref_file),
+                PreferenceConstants.PREFERENCE_NAME,
                 Context.MODE_PRIVATE
         );
-        accessToken = sp.getString("access_token", null);
+        accessToken = sp.getString(PreferenceConstants.ACCESS_TOKEN, null);
     }
 
     public static String getMessageBody(HttpURLConnection connection) {

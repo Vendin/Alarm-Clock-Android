@@ -27,6 +27,7 @@ import com.example.av.alarm_clock.alarm_ringer.ImageDownloadIntentService;
 import com.example.av.alarm_clock.alarm_ringer.RingADingDingReceiver;
 import com.example.av.alarm_clock.auth.LoginActivity;
 import com.example.av.alarm_clock.storage.AlarmTableHelper;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
@@ -56,8 +57,8 @@ public class AlarmList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), MODE_PRIVATE);
-        String username = sharedPreferences.getString("full_name", "Гость");
+        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceConstants.PREFERENCE_NAME, MODE_PRIVATE);
+        String username = sharedPreferences.getString(PreferenceConstants.FULL_NAME, "Гость");
 
         Drawer.Result drawerResult = new Drawer()
                 .withActivity(this)
@@ -90,7 +91,7 @@ public class AlarmList extends AppCompatActivity {
                             String itemName = ((Nameable) drawerItem).getName();
 
                             if (itemName.equals("Выход")) {
-                                SharedPreferences.Editor sharedPreferences = getSharedPreferences(getString(R.string.app_pref_file), Context.MODE_PRIVATE).edit();
+                                SharedPreferences.Editor sharedPreferences = getSharedPreferences(PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
                                 sharedPreferences.clear();
                                 sharedPreferences.commit();
 
@@ -131,8 +132,8 @@ public class AlarmList extends AppCompatActivity {
         Context context = getApplicationContext();
 
         SharedPreferences preferences = context.getSharedPreferences(
-                context.getString(R.string.app_pref_file), Context.MODE_PRIVATE);
-        int lastUpload = preferences.getInt("last_upload_day", today + 1);
+                PreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        int lastUpload = preferences.getInt(PreferenceConstants.LAST_UPLOAD_DAY, today + 1);
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);

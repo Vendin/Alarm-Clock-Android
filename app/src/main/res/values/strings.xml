@@ -5,10 +5,6 @@
     <string name="action_settings">Настройки</string>
     <string name="account_denied">Доступ запрещён</string>
 
-
-    <string name="app_pref_file">application_preferences</string>
-    <string name="app_is_guest">#IS_GUEST_USER#</string>
-
     <string name="title_activity_alarm_list">Будильники</string>
 
     <string name="title_activity_rise_and_shine_mr_freeman">С добрым утром!</string>

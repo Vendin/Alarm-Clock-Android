@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.av.alarm_clock.R;
 import com.example.av.alarm_clock.api.Requester;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 import com.squareup.otto.Bus;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -94,11 +95,11 @@ public class ConnectInstagramAsyncTask extends AsyncTask<String, Void, JSONObjec
                 Integer id = data.getInt("id");
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences(
-                        context.getString(R.string.app_pref_file),
+                        PreferenceConstants.PREFERENCE_NAME,
                         Context.MODE_PRIVATE);
                 SharedPreferences.Editor prefereceEditor = sharedPreferences.edit();
-                prefereceEditor.putString("full_name", fullName);
-                prefereceEditor.putInt("id", id);
+                prefereceEditor.putString(PreferenceConstants.FULL_NAME, fullName);
+                prefereceEditor.putInt(PreferenceConstants.ID, id);
                 prefereceEditor.commit();
                 Log.d(this.getClass().getCanonicalName(), "Preferences are saved");
             }

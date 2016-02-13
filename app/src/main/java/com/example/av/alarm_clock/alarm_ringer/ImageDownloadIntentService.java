@@ -11,6 +11,7 @@ import com.example.av.alarm_clock.api.RemoteImage;
 import com.example.av.alarm_clock.api.Requester;
 import com.example.av.alarm_clock.models.ImageFile;
 import com.example.av.alarm_clock.storage.ImageTableHelper;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,13 +54,13 @@ public class ImageDownloadIntentService extends IntentService {
         Log.d(this.getClass().getCanonicalName(), "started download images action");
 
         SharedPreferences sharedPreferences = getBaseContext().getSharedPreferences(
-                getBaseContext().getString(R.string.app_pref_file),
+                PreferenceConstants.PREFERENCE_NAME,
                 Context.MODE_PRIVATE
         );
 
-        int necessary_friendlies_count = sharedPreferences.getInt("necessary_friendlies_count", 10);
-        int necessary_others_count = sharedPreferences.getInt("necessary_others_count", 10);
-        int fetch_size = sharedPreferences.getInt("fetch_size", 100);
+        int necessary_friendlies_count = sharedPreferences.getInt(PreferenceConstants.NECESSARY_FRIENDLIES, 10);
+        int necessary_others_count = sharedPreferences.getInt(PreferenceConstants.NECESSARY_OTHERS, 10);
+        int fetch_size = sharedPreferences.getInt(PreferenceConstants.FETCH_SIZE, 100);
 
         ImageTableHelper imageTableHelper = new ImageTableHelper(getBaseContext());
         List<ImageFile> unshownFriendlies = imageTableHelper.getImageFiles(true,

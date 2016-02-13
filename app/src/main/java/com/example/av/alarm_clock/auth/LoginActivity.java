@@ -39,6 +39,7 @@ import java.util.List;
 
 import com.example.av.alarm_clock.MainActivity;
 import com.example.av.alarm_clock.R;
+import com.example.av.alarm_clock.storage.PreferenceConstants;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -134,10 +135,10 @@ public class LoginActivity extends Activity {
                         }
 
                         SharedPreferences sharedPreferences = context.getSharedPreferences(
-                                context.getString(R.string.app_pref_file),
+                                PreferenceConstants.PREFERENCE_NAME,
                                 Context.MODE_PRIVATE);
                         SharedPreferences.Editor prefereceEditor = sharedPreferences.edit();
-                        prefereceEditor.putString("access_token", accessToken);
+                        prefereceEditor.putString(PreferenceConstants.ACCESS_TOKEN, accessToken);
                         prefereceEditor.commit();
                     } else if (url.contains("error_reason")) {
                         Toast.makeText(LoginActivity.this,
